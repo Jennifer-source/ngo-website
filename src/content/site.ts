@@ -271,30 +271,41 @@ export const FOUNDERS_INTRO = {
 
 export const FOUNDERS: Founder[] = [
   {
-    name: "Founder name",
-    role: "Founder & Managing Trustee",
+    name: "PS NKM Joshus Naanapogula",
+    role: "Founder",
     story:
-      "Placeholder — the story of calling: where they came from, the moment the ministry began, and what has kept them faithful to it.",
-    vision:
-      "Placeholder — a short, personal statement of vision for the years ahead.",
-    contribution: "Placeholder — leadership, vision and day-to-day shepherding.",
+      "Their story of calling — the beginnings of the ministry and what has kept it faithful — will be recorded here.",
+    vision: "A personal word of vision for the years ahead.",
+    contribution: "Leadership, vision and day-to-day shepherding.",
     image: {
-      src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=80",
-      alt: "Placeholder — portrait of founder (to be replaced)",
+      src: "/assets/founder-1.jpg",
+      alt: "Portrait of PS NKM Joshus Naanapogula, Founder",
       editable: true,
     },
   },
   {
-    name: "Co-founder name",
-    role: "Co-founder & Trustee",
+    name: "PS. Joffynayanapogula",
+    role: "Founder",
     story:
-      "Placeholder — their thread in the story: the beginnings, the community relationships, the quiet faithfulness.",
-    vision:
-      "Placeholder — what they hope every life touched by the ministry will carry forward.",
-    contribution: "Placeholder — community, care and discipleship.",
+      "Their thread in the story — the community, the relationships, the quiet faithfulness — will be recorded here.",
+    vision: "A personal word of vision for the years ahead.",
+    contribution: "Community, care and discipleship.",
     image: {
-      src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1000&q=80",
-      alt: "Placeholder — portrait of co-founder (to be replaced)",
+      src: "/assets/founder-2.jpg",
+      alt: "Portrait of PS. Joffynayanapogula, Founder",
+      editable: true,
+    },
+  },
+  {
+    name: "Mr. Joffy Nayanapogula",
+    role: "Co-Founder",
+    story:
+      "Their part in the work and the life it serves will be recorded here.",
+    vision: "A personal word of vision for the years ahead.",
+    contribution: "Service, support and stewardship.",
+    image: {
+      src: "/assets/cofounder.jpg",
+      alt: "Portrait of Mr. Joffy Nayanapogula, Co-Founder",
       editable: true,
     },
   },
