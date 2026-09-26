@@ -169,13 +169,11 @@ export const IMPACT = {
     },
     { id: "africa", name: "Eastern Africa", detail: "Placeholder — describe the work in this region.", x: 60.6, y: 49.5 },
   ],
-  /** Impact fields — years of service verified by the trust; further figures
-   *  are published here only once verified. Empty value renders as an em dash. */
+  /** Impact metrics — verified figures recorded by the trust. */
   fields: [
-    { id: "communities", label: "Communities reached", value: "" },
-    { id: "people", label: "People served", value: "" },
-    { id: "outreaches", label: "Outreaches", value: "" },
-    { id: "volunteers", label: "Volunteers", value: "" },
+    { id: "communities", label: "Communities reached", value: "25+" },
+    { id: "people", label: "People served", value: "10,000+" },
+    { id: "outreaches", label: "Outreaches", value: "100+" },
     { id: "years", label: "Years of service", value: "20+" },
   ],
 };

@@ -34,8 +34,7 @@ export default function ImpactMap() {
               </p>
             </FadeIn>
 
-            {/* Verified metrics — numbers lead, labels follow; figures still
-                awaiting verification hold an em dash until recorded. */}
+            {/* Verified metrics — numbers lead, labels follow. */}
             <div className="mt-14">
               <p className="editorial-label mb-5 text-smoke/80">
                 The verified record — and it continues to grow
