@@ -46,6 +46,7 @@ export default function Serve() {
               onSelect={setActiveId}
               reduced={!!reduced}
               active={active}
+              pathways={pathways}
             />
           </div>
         </div>
@@ -59,11 +60,13 @@ function ServeOrbit({
   onSelect,
   reduced,
   active,
+  pathways,
 }: {
   activeId: string;
   onSelect: (id: string) => void;
   reduced: boolean;
   active: ReturnType<typeof useServeContent>["pathways"][number];
+  pathways: ReturnType<typeof useServeContent>["pathways"];
 }) {
   return (
     <div className="lg:flex lg:items-center lg:gap-10">
@@ -113,7 +116,7 @@ function ServeOrbit({
         {/* Pathway nodes on the orbit */}
         <ul aria-label="Serve pathways" className="absolute inset-0">
           {pathways.map((p, i) => {
-            const angle = (i / SERVE_PATHWAYS.length) * 2 * Math.PI - Math.PI / 2;
+            const angle = (i / pathways.length) * 2 * Math.PI - Math.PI / 2;
             const px = 50 + Math.cos(angle) * 50;
             const py = 50 + Math.sin(angle) * 50;
             const isActive = p.id === activeId;
