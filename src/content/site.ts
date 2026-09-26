@@ -36,11 +36,11 @@ export const HERO = {
   primaryCta: { label: "Explore our journey", href: "#journey" },
   secondaryCta: { label: "Be part of the journey", href: "#talk-to-us" },
   scrollLabel: "Scroll to discover",
-  /** Replace src with the ministry's hero photograph when provided. */
+  /** Ministry hero artwork — drop the file at public/images/hero.jpg (or any path/URL). */
   image: {
-    src: "https://images.unsplash.com/photo-1470319169494-595b6ff3c7d6?auto=format&fit=crop&w=2400&q=80",
-    alt: "Placeholder — ministry hero photograph to be provided",
-    editable: true as const,
+    src: "/images/hero.jpg",
+    alt: "By His power, with His love, for His glory — Romans 11:36 — Hands of Grace Trust",
+    editable: false as const,
   },
 };
 
