@@ -30,7 +30,8 @@ export default function AuthModal({
   contextLabel?: string;
 }) {
   const { signIn } = useAuthActions();
-  const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
+  // Convex Auth Password provider flows are exactly "signIn" | "signUp".
+  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -38,7 +39,7 @@ export default function AuthModal({
   const submit = async (ev: FormEvent) => {
     ev.preventDefault();
     setError(null);
-    if (mode === "sign-up" && form.name.trim().length < 2) {
+    if (mode === "signUp" && form.name.trim().length < 2) {
       setError("Please enter your full name.");
       return;
     }
@@ -52,7 +53,7 @@ export default function AuthModal({
         flow: mode,
         email: form.email.trim(),
         password: form.password,
-        ...(mode === "sign-up" ? { name: form.name.trim() } : {}),
+        ...(mode === "signUp" ? { name: form.name.trim() } : {}),
       });
       onSignedIn?.();
       onOpenChange(false);
@@ -73,7 +74,7 @@ export default function AuthModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === "sign-in" ? "Sign in to " : "Create your account to "}
+            {mode === "signIn" ? "Sign in to " : "Create your account to "}
             {contextLabel}
           </DialogTitle>
           <DialogDescription>
@@ -84,7 +85,7 @@ export default function AuthModal({
         </DialogHeader>
 
         <form onSubmit={submit} className="space-y-4" noValidate>
-          {mode === "sign-up" && (
+          {mode === "signUp" && (
             <div>
               <label htmlFor="am-name" className="mb-1.5 block text-sm font-medium">
                 Full name
@@ -120,7 +121,7 @@ export default function AuthModal({
             <Input
               id="am-password"
               type="password"
-              autoComplete={mode === "sign-up" ? "new-password" : "current-password"}
+              autoComplete={mode === "signUp" ? "new-password" : "current-password"}
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
               placeholder="At least 8 characters"
@@ -139,9 +140,9 @@ export default function AuthModal({
             {busy ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
-                {mode === "sign-up" ? "Creating account…" : "Signing in…"}
+                {mode === "signUp" ? "Creating account…" : "Signing in…"}
               </>
-            ) : mode === "sign-up" ? (
+            ) : mode === "signUp" ? (
               "Create account & continue"
             ) : (
               "Sign in & continue"
@@ -149,16 +150,16 @@ export default function AuthModal({
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            {mode === "sign-in" ? "New here? " : "Already have an account? "}
+            {mode === "signIn" ? "New here? " : "Already have an account? "}
             <button
               type="button"
               className={cn("underline underline-offset-4 hover:text-foreground")}
               onClick={() => {
-                setMode(mode === "sign-in" ? "sign-up" : "sign-in");
+                setMode(mode === "signIn" ? "signUp" : "signIn");
                 setError(null);
               }}
             >
-              {mode === "sign-in" ? "Create an account" : "Sign in instead"}
+              {mode === "signIn" ? "Create an account" : "Sign in instead"}
             </button>
           </p>
         </form>

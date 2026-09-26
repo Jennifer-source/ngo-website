@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router";
 import { cn } from "@/lib/utils";
+import type { Id } from "../convex/_generated/dataModel";
+import { ContentEditor, MessageRow, Stat, fmtDateShort as fmtDate, fmtInr } from "./adminHelpers";
 
 /**
  * ADMIN DASHBOARD — protected by RequireAdmin at the route and re-checked
@@ -38,11 +40,6 @@ const TABS: Array<{ id: Tab; label: string }> = [
   { id: "settings", label: "Settings" },
 ];
 
-const fmtInr = (n: number) =>
-  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
-const fmtDate = (t: number) =>
-  new Date(t).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-
 export default function Admin() {
   const { user, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>("overview");
@@ -51,13 +48,6 @@ export default function Admin() {
 
   const overview = useQuery(api.admin.overviewStats);
   const health = useQuery(api.health.runHealthCheck);
-
-  // Content
-  const [contentKey, setContentKey] = useState("hero");
-  const [contentValue, setContentValue] = useState("");
-  const setContent = useMutation(api.content.setContent);
-  const contentMeta = useQuery(api.content.listContentMeta);
-  const [contentLoading, setContentLoading] = useState(false);
 
   // Media
   const media = useQuery(api.content.listMedia);
@@ -82,7 +72,7 @@ export default function Admin() {
     registrationLink: "",
   });
 
-  // Messages / volunteers / donations / users
+  // Messages / volunteers / donations / users / audit
   const messages = useQuery(api.messages.adminListMessages, {});
   const updateMessage = useMutation(api.messages.adminUpdateMessage);
   const applications = useQuery(api.volunteers.adminListApplications, {});
@@ -107,32 +97,6 @@ export default function Admin() {
     );
   }, [messages, search]);
 
-  const loadSection = async (key: string) => {
-    setContentKey(key);
-    setContentLoading(true);
-    try {
-      const value = await (useQueryFetch as unknown as (k: string) => Promise<unknown>)(key);
-      setContentValue(JSON.stringify(value ?? {}, null, 2));
-    } finally {
-      setContentLoading(false);
-    }
-  };
-
-  const saveContent = async (ev: FormEvent) => {
-    ev.preventDefault();
-    setBusy(true);
-    setFlash(null);
-    try {
-      const parsed = JSON.parse(contentValue);
-      await setContent({ key: contentKey, value: parsed });
-      setFlash({ ok: true, text: `Saved "${contentKey}". The public site now uses this content.` });
-    } catch (err) {
-      setFlash({ ok: false, text: err instanceof Error ? err.message.slice(0, 160) : "Invalid JSON." });
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const uploadMedia = async (file: File) => {
     setBusy(true);
     setFlash(null);
@@ -145,7 +109,7 @@ export default function Admin() {
       });
       const { storageId } = (await res.json()) as { storageId: string };
       await createAsset({
-        storageId,
+        storageId: storageId as unknown as Id<"_storage">,
         kind: mediaKind,
         filename: file.name,
         mimeType: file.type,
@@ -160,7 +124,7 @@ export default function Admin() {
     }
   };
 
-  const addEvent = async (ev: FormEvent) => {
+  const addEvent = async (ev: React.FormEvent) => {
     ev.preventDefault();
     setBusy(true);
     setFlash(null);
@@ -287,7 +251,7 @@ export default function Admin() {
                 <p className="mt-5 border-l-2 border-sunlight bg-mist/60 p-4 text-[0.85rem] leading-relaxed text-charcoal/85">
                   {health.adminCount === 0
                     ? "No admin accounts yet. Set ADMIN_1_EMAIL / ADMIN_1_PASSWORD and ADMIN_2_EMAIL / ADMIN_2_PASSWORD in the Keys tab, then run: bunx convex run adminSetup:seedAdmins"
-                    : `${health.adminCount} admin accounts exist (expected 2).`}
+                    : `${health.adminCount} admin account(s) exist (expected 2).`}
                 </p>
               )}
             </div>
@@ -300,45 +264,12 @@ export default function Admin() {
             <p className="max-w-3xl text-[0.9rem] leading-relaxed text-smoke">
               Edit the website's sections. Saved content is what the public site renders — until a
               section is saved here, the site uses its curated defaults. Values are JSON shaped like
-              the section data (hero: kicker, titleLines, subline, image{`{src,alt}`}; impact: fields
-              [{`{id,label,value}`}] &amp; regions; founders: founders[{`{name,role,story,vision,contribution,image}`}];
-              fragments: items[{`{id,caption,detail,span,image}`}] …).
+              the section data (hero: kicker, titleLines, subline, image; impact: fields and
+              regions; founders: founders array; fragments: items array; social: handles array …).
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {["hero", "impact", "film", "social", "founders", "serve", "fragments", "talkToUs", "donate", "footer", "contact"].map((k) => (
-                <button
-                  key={k}
-                  onClick={() => void loadSection(k)}
-                  className={cn(
-                    "border px-3.5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors",
-                    contentKey === k ? "border-rust bg-rust text-ivory" : "border-ink/15 text-ink/60 hover:border-rust/50 hover:text-rust",
-                  )}
-                >
-                  {k}
-                </button>
-              ))}
-            </div>
-            <form onSubmit={saveContent} className="mt-5 max-w-3xl">
-              <Textarea
-                rows={16}
-                value={contentValue}
-                onChange={(e) => setContentValue(e.target.value)}
-                placeholder={contentLoading ? "Loading current content…" : `Select "${contentKey}" above, then edit its JSON here.`}
-                className="font-mono text-[0.8rem]"
-                required
-              />
-              <div className="mt-4 flex items-center gap-4">
-                <Button type="submit" disabled={busy || contentLoading}>
-                  {busy ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
-                  Save {contentKey}
-                </Button>
-                {contentMeta && (
-                  <p className="text-[0.78rem] text-smoke">
-                    {contentMeta.filter((c) => c.hasValue).length} of 11 sections saved
-                  </p>
-                )}
-              </div>
-            </form>
+            <ContentEditor
+              onSaved={(key) => setFlash({ ok: true, text: `Saved "${key}". The public site now uses this content.` })}
+            />
           </section>
         )}
 
@@ -475,6 +406,9 @@ export default function Admin() {
                     </div>
                   </li>
                 ))}
+                {events !== undefined && events.length === 0 && (
+                  <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No events yet.</li>
+                )}
               </ul>
             </div>
           </section>
@@ -489,7 +423,7 @@ export default function Admin() {
                 <MessageRow key={m._id} m={m} onSave={async (patch) => { await updateMessage({ id: m._id, ...patch }); }} />
               ))}
               {messages !== undefined && messages.length === 0 && (
-                <p className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No messages yet.</p>
+                <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No messages yet.</li>
               )}
             </ul>
           </section>
@@ -538,7 +472,7 @@ export default function Admin() {
                 </li>
               ))}
               {applications !== undefined && applications.length === 0 && (
-                <p className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No applications yet.</p>
+                <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No applications yet.</li>
               )}
             </ul>
           </section>
@@ -566,7 +500,7 @@ export default function Admin() {
                 </li>
               ))}
               {donations !== undefined && donations.length === 0 && (
-                <p className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No donations yet.</p>
+                <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No donations yet.</li>
               )}
             </ul>
 
@@ -579,6 +513,9 @@ export default function Admin() {
                   <span className="font-serif tabular-nums">{fmtInr(i.amountInr)}</span>
                 </li>
               ))}
+              {invoices !== undefined && invoices.length === 0 && (
+                <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No invoices yet.</li>
+              )}
             </ul>
           </section>
         )}
@@ -590,7 +527,10 @@ export default function Admin() {
               {(users ?? []).map((u) => (
                 <li key={u._id} className="flex flex-wrap items-center justify-between gap-3 border border-ink/10 bg-ivory px-5 py-4">
                   <div>
-                    <p className="text-[0.95rem] text-charcoal/90">{u.name ?? "—"} {u.role === "admin" && <span className="editorial-label ml-2 border border-rust px-1.5 py-0.5 text-[0.55rem] text-rust">admin</span>}</p>
+                    <p className="text-[0.95rem] text-charcoal/90">
+                      {u.name ?? "—"}
+                      {u.role === "admin" && <span className="editorial-label ml-2 border border-rust px-1.5 py-0.5 text-[0.55rem] text-rust">admin</span>}
+                    </p>
                     <p className="text-[0.8rem] text-smoke">{u.email}</p>
                   </div>
                   <p className="text-[0.78rem] text-smoke">
@@ -607,6 +547,9 @@ export default function Admin() {
                   )}
                 </li>
               ))}
+              {users !== undefined && users.length === 0 && (
+                <li className="border border-dashed border-ink/15 bg-cream/50 p-8 text-center text-[0.9rem] text-smoke">No users yet.</li>
+              )}
             </ul>
           </section>
         )}
@@ -617,9 +560,7 @@ export default function Admin() {
             <div>
               <h2 className="editorial-label text-rust">Admin accounts</h2>
               <div className="mt-5 border border-ink/10 bg-ivory p-6 text-[0.88rem] leading-relaxed text-charcoal/85">
-                <p>
-                  Admins are seeded securely from the Keys tab. Configure:
-                </p>
+                <p>Admins are seeded securely from the Keys tab. Configure:</p>
                 <pre className="mt-3 overflow-auto rounded bg-ink p-4 text-[0.72rem] leading-relaxed text-mist">{`ADMIN_1_EMAIL=…
 ADMIN_1_PASSWORD=…   (or ADMIN_1_PASSWORD_HASH)
 ADMIN_2_EMAIL=…
@@ -627,9 +568,7 @@ ADMIN_2_PASSWORD=…   (or ADMIN_2_PASSWORD_HASH)`}</pre>
                 <p className="mt-3">
                   Then run once: <code className="rounded bg-mist px-1.5 py-0.5">bunx convex run adminSetup:seedAdmins</code>
                 </p>
-                <p className="mt-3 text-smoke">
-                  Current admin accounts: {health?.adminCount ?? "…"}
-                </p>
+                <p className="mt-3 text-smoke">Current admin accounts: {health?.adminCount ?? "…"}</p>
               </div>
             </div>
             <div>
@@ -650,89 +589,5 @@ ADMIN_2_PASSWORD=…   (or ADMIN_2_PASSWORD_HASH)`}</pre>
         )}
       </div>
     </main>
-  );
-}
-
-/* ------------ helpers ------------- */
-
-// Content section loader: fetches the current value of one key.
-// Implemented as a plain fetch against the Convex query endpoint to avoid
-// conditional hook usage inside the editor flow.
-const { useQueryFetch } = { useQueryFetch: (_k: string) => Promise.resolve(null) } as {
-  useQueryFetch: (k: string) => Promise<unknown>;
-};
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-ink/10 bg-ivory p-6">
-      <p className="editorial-label text-[0.58rem] text-smoke">{label}</p>
-      <p className="mt-3 font-serif text-3xl tabular-nums text-charcoal">{value}</p>
-    </div>
-  );
-}
-
-function MessageRow({
-  m,
-  onSave,
-}: {
-  m: {
-    _id: string;
-    name: string;
-    email: string;
-    type: string;
-    message: string;
-    status: string;
-    adminNotes?: string | null;
-    adminResponse?: string | null;
-    createdAt: number;
-  };
-  onSave: (patch: { status?: string; adminNotes?: string; adminResponse?: string }) => Promise<void>;
-}) {
-  return (
-    <li className="border border-ink/10 bg-ivory p-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <div>
-          <p className="font-serif text-lg">{m.name} <span className="ml-2 editorial-label text-[0.55rem] text-rust">{m.type}</span></p>
-          <p className="text-[0.8rem] text-smoke">{m.email}</p>
-        </div>
-        <span className="editorial-label border border-ink/15 px-2.5 py-1 text-[0.58rem] text-ink/70">{m.status}</span>
-      </div>
-      <p className="mt-3 text-[0.92rem] leading-relaxed text-charcoal/85">{m.message}</p>
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        {["new", "read", "in_progress", "responded", "closed"].map((s) => (
-          <button
-            key={s}
-            onClick={() => void onSave({ status: s })}
-            className={cn(
-              "border px-3 py-1.5 text-[0.62rem] font-medium uppercase tracking-[0.14em]",
-              m.status === s ? "border-rust bg-rust text-ivory" : "border-ink/15 text-ink/60 hover:border-rust/50 hover:text-rust",
-            )}
-          >
-            {s.replace("_", " ")}
-          </button>
-        ))}
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={async () => {
-            const notes = window.prompt("Internal note (never visible to the user):", m.adminNotes ?? "");
-            if (notes !== null) await onSave({ adminNotes: notes });
-          }}
-        >
-          Note
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={async () => {
-            const response = window.prompt("Response (visible to the user):", m.adminResponse ?? "");
-            if (response !== null) await onSave({ adminResponse: response });
-          }}
-        >
-          Respond
-        </Button>
-      </div>
-      <p className="editorial-label mt-4 text-[0.55rem] text-smoke/60">{fmtDate(m.createdAt)}</p>
-    </li>
   );
 }

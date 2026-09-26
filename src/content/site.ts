@@ -21,6 +21,7 @@ export const NAV_LINKS = [
   { label: "Founders", href: "#founders" },
   { label: "Fragments", href: "#fragments" },
   { label: "Talk To Us", href: "#talk-to-us" },
+  { label: "Events", href: "/events" },
 ] as const;
 
 export const CHAPTER_COUNT = 11;

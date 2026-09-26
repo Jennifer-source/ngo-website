@@ -22,6 +22,7 @@ export default function TalkToUs() {
   const talk = useTalkToUsContent();
   const contact = useContactContent();
   const submit = useMutation(api.messages.submitMessage);
+  const submitApplication = useMutation(api.volunteers.submitApplication);
   const { isLoading: authLoading, isAuthenticated } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [pendingSubmit, setPendingSubmit] = useState(false);
@@ -52,6 +53,16 @@ export default function TalkToUs() {
         phone: values.phone.trim() || undefined,
         message: values.message.trim(),
       });
+      if (pathway === "volunteer") {
+        // The volunteer pathway also creates a trackable application so the
+        // sender can follow its status under My account → My applications.
+        await submitApplication({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim() || undefined,
+          message: values.message.trim(),
+        });
+      }
       setStatus("success");
     } catch {
       setStatus("error");

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FOOTER, NAV_LINKS, SOCIAL_HANDLES, CONTACT } from "@/content/site";
+import { NAV_LINKS } from "@/content/site";
+import { useFooterContent, useSocialContent, useContactContent } from "@/hooks/use-site-content";
 import { EASE } from "./motion/Primitives";
 
 /**
@@ -9,6 +10,9 @@ import { EASE } from "./motion/Primitives";
  * the story continues beyond the website.
  */
 export default function Footer() {
+  const footer = useFooterContent();
+  const social = useSocialContent();
+  const contact = useContactContent();
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -21,7 +25,7 @@ export default function Footer() {
     return () => clearInterval(id);
   }, []);
 
-  const socials = SOCIAL_HANDLES.filter((s) => s.href);
+  const socials = social.handles.filter((s) => s.href);
 
   return (
     <footer
@@ -38,7 +42,7 @@ export default function Footer() {
           transition={{ duration: 1.2, ease: EASE }}
           className="font-serif text-[clamp(2.8rem,8vw,7rem)] leading-none text-ivory"
         >
-          {FOOTER.title}
+          {footer.title}
         </motion.h2>
 
         <motion.p
@@ -48,7 +52,7 @@ export default function Footer() {
           transition={{ duration: 1, ease: EASE, delay: 0.25 }}
           className="mt-5 font-serif text-xl italic text-apricot/90 md:text-2xl"
         >
-          {FOOTER.words.join("  ")}
+          {footer.words.join("  ")}
         </motion.p>
 
         <div className="rule my-14 text-ivory" />
@@ -74,6 +78,14 @@ export default function Footer() {
                   className="link-reveal text-[0.9rem] text-mist/80 hover:text-sunlight"
                 >
                   Donate
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/events"
+                  className="link-reveal text-[0.9rem] text-mist/80 hover:text-sunlight"
+                >
+                  Events
                 </a>
               </li>
             </ul>
@@ -106,15 +118,15 @@ export default function Footer() {
           <div className="col-span-12 md:col-span-4">
             <p className="editorial-label mb-5 text-apricot/70">Contact</p>
             <div className="space-y-2.5 text-[0.9rem] text-mist/80">
-              {CONTACT.email ? (
-                <p>{CONTACT.email}</p>
+              {contact.email ? (
+                <p>{contact.email}</p>
               ) : (
                 <p className="text-mist/50">Contact details coming soon</p>
               )}
-              {CONTACT.phone && <p>{CONTACT.phone}</p>}
-              {CONTACT.address && <p className="text-mist/60">{CONTACT.address}</p>}
+              {contact.phone && <p>{contact.phone}</p>}
+              {contact.address && <p className="text-mist/60">{contact.address}</p>}
               <p className="editorial-label pt-2 text-[0.6rem] text-mist/40">
-                {CONTACT.hours}
+                {contact.hours}
               </p>
               <p className="editorial-label pt-2 tabular-nums text-[0.6rem] text-mist/40">
                 Local time — {time || "—"}
@@ -128,10 +140,10 @@ export default function Footer() {
         {/* Legal strip */}
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <p className="editorial-label text-[0.6rem] text-mist/50">
-            © {new Date().getFullYear()} {FOOTER.copyright}
+            © {new Date().getFullYear()} {footer.copyright}
           </p>
           <ul className="flex flex-wrap gap-6">
-            {FOOTER.legal.map((l) => (
+            {footer.legal.map((l) => (
               <li key={l.label}>
                 <a
                   href={l.href}
@@ -143,7 +155,7 @@ export default function Footer() {
             ))}
           </ul>
           <p className="editorial-label text-[0.6rem] text-apricot/80">
-            {FOOTER.closing}
+            {footer.closing}
           </p>
         </div>
       </div>

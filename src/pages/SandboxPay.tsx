@@ -5,6 +5,7 @@ import { useSearchParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Loader2, ShieldCheck, TriangleAlert } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import type { Id } from "../convex/_generated/dataModel";
 
 /**
  * Sandbox test checkout — TEST MODE ONLY.
@@ -34,7 +35,7 @@ export default function SandboxPay() {
     setState("processing");
     setError("");
     try {
-      const r = await confirm({ donationId, outcome });
+      const r = await confirm({ donationId: donationId as unknown as Id<"donations">, outcome });
       setResult({
         ok: outcome === "success",
         invoiceNumber: r.invoiceNumber ?? null,

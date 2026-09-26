@@ -5,8 +5,10 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
+import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/content/site";
+import { useAuth } from "@/hooks/use-auth";
 import { EASE } from "./motion/Primitives";
 
 const SECTIONS = [
@@ -19,6 +21,8 @@ const SECTIONS = [
 ] as const;
 
 export default function Navigation() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
@@ -66,6 +70,10 @@ export default function Navigation() {
 
   const go = (href: string) => {
     setOpen(false);
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
     document
       .querySelector(href)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -142,6 +150,36 @@ export default function Navigation() {
           </ul>
 
           <div className="flex items-center gap-4">
+            <a
+              href={isAuthenticated ? "/account" : "/auth?returnTo=%2Faccount"}
+              onClick={(e) => {
+                e.preventDefault();
+                setOpen(false);
+                navigate(isAuthenticated ? "/account" : "/auth?returnTo=%2Faccount");
+              }}
+              className={cn(
+                "hidden text-[0.72rem] font-medium uppercase tracking-[0.22em] transition-colors duration-500 lg:inline-block",
+                light ? "text-mist/80 hover:text-sunlight" : "text-ink/70 hover:text-rust",
+              )}
+            >
+              {isAuthenticated ? "My account" : "Sign in"}
+            </a>
+            {isAuthenticated && user?.role === "admin" && (
+              <a
+                href="/admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpen(false);
+                  navigate("/admin");
+                }}
+                className={cn(
+                  "hidden border border-ink/20 px-3 py-2 text-[0.65rem] font-medium uppercase tracking-[0.2em] transition-colors duration-500 hover:border-rust hover:text-rust lg:inline-block",
+                  light && "border-mist/30 text-mist/80 hover:border-sunlight hover:text-sunlight",
+                )}
+              >
+                Admin
+              </a>
+            )}
             <a
               href="#donate"
               onClick={(e) => {

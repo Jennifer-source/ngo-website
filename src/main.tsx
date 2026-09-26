@@ -6,13 +6,17 @@ import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
 import React, { StrictMode, useEffect, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import { BrowserRouter, Route, Routes, useLocation, Navigate } from "react-router";
+import { RequireAdmin } from "./components/RequireAdmin";
 import "./index.css";
 
 // Lazy load route components for better code splitting
 const Landing = lazy(() => import("./pages/Landing.tsx"));
 const AuthPage = lazy(() => import("./pages/Auth.tsx"));
-const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
+const Account = lazy(() => import("./pages/Account.tsx"));
+const Admin = lazy(() => import("./pages/Admin.tsx"));
+const Events = lazy(() => import("./pages/Events.tsx"));
+const SandboxPay = lazy(() => import("./pages/SandboxPay.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 // Simple loading fallback for route transitions
@@ -119,17 +123,32 @@ createRoot(document.getElementById("root")!).render(
           <RouteSyncer />
           <Suspense fallback={<RouteLoading />}>
             <Routes>
+              {/* Public site — browsing never requires an account. */}
               <Route path="/" element={<Landing />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/sandbox-pay" element={<SandboxPay />} />
               <Route
                 path="/auth"
-                element={<AuthPage redirectAfterAuth="/dashboard" />}
+                element={<AuthPage redirectAfterAuth="/account" />}
               />
+              {/* Authenticated user area — own records only. */}
               <Route
-                path="/dashboard"
+                path="/account"
                 element={
                   <RequireAuth>
-                    <Dashboard />
+                    <Account />
                   </RequireAuth>
+                }
+              />
+              {/* Legacy starter route → the real account area. */}
+              <Route path="/dashboard" element={<Navigate to="/account" replace />} />
+              {/* Protected admin area — role enforced server-side too. */}
+              <Route
+                path="/admin"
+                element={
+                  <RequireAdmin>
+                    <Admin />
+                  </RequireAdmin>
                 }
               />
               <Route path="*" element={<NotFound />} />

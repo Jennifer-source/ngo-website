@@ -82,6 +82,9 @@ async function authSignIn(
     }),
   });
   const data = (await res.json()) as Record<string, unknown>;
+  if (data.status === "error") {
+    throw new Error(String(data.errorMessage ?? "auth:signIn failed").slice(0, 220));
+  }
   const value = (data.value ?? {}) as { tokens?: { token?: string } | null };
   return { token: value.tokens?.token ?? null, raw: data };
 }
@@ -126,11 +129,11 @@ console.log("1. AUTHENTICATION");
   }
 
   try {
-    const r = await authSignIn("signIn", U1.email, "wrong-password-1");
-    assert(!r.token, "invalid login unexpectedly returned a token");
-    ok("invalid login rejected (no token)");
+    // Correct rejection = server error (InvalidAccountID/InvalidSecret) or no token.
+    await expectError("probe", () => authSignIn("signIn", U1.email, "wrong-password-1"));
+    ok("invalid login rejected");
   } catch (e) {
-    fail("invalid login rejected (no token)", e);
+    fail("invalid login rejected", e);
   }
 
   try {
@@ -148,6 +151,33 @@ console.log("1. AUTHENTICATION");
     ok("re-login / session handling works");
   } catch (e) {
     fail("re-login / session handling works", e);
+  }
+
+  try {
+    await expectError("probe", () => authSignIn("signUp", U1.email, "different-pass-99", U1.name));
+    ok("duplicate email signup rejected");
+  } catch (e) {
+    fail("duplicate email signup rejected", e);
+  }
+
+  try {
+    // Sign out via the auth ACTION. Convex Auth revokes the refresh token;
+    // an already-issued short-lived access token remains valid until expiry
+    // (standard stateless-JWT behavior), so the verifiable assertions are:
+    // the server accepts the sign-out, and a fresh sign-in restores access.
+    const res = await fetch(`${DEPLOYMENT_URL}/api/action`, {
+      method: "POST",
+      headers: authedHeaders(u2.token as string),
+      body: JSON.stringify({ path: "auth:signOut", format: "json", args: {} }),
+    });
+    const data = (await res.json()) as Record<string, unknown>;
+    if (data.status === "error") throw new Error(String(data.errorMessage ?? "signOut failed").slice(0, 140));
+    const again = await authSignIn("signIn", U2.email, U2.password);
+    assert(again.token, "re-login after logout failed");
+    u2.token = again.token;
+    ok("logout accepted by server; re-login restores access");
+  } catch (e) {
+    fail("logout accepted by server; re-login restores access", e);
   }
 }
 

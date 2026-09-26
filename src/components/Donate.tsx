@@ -64,16 +64,7 @@ export default function Donate() {
     return e;
   };
 
-  const onSubmit = async (ev: FormEvent) => {
-    ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-    if (Object.keys(e).length > 0) return;
-    if (!authLoading && !isAuthenticated) {
-      // Giving needs an account so the receipt is retrievable later.
-      setAuthOpen(true);
-      return;
-    }
+  const doSubmit = async () => {
     setStatus("sending");
     setServerError("");
     try {
@@ -98,6 +89,19 @@ export default function Donate() {
           : "The gift could not be processed just now. Please try again in a moment — or write to us directly.",
       );
     }
+  };
+
+  const onSubmit = async (ev: FormEvent) => {
+    ev.preventDefault();
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length > 0) return;
+    if (!authLoading && !isAuthenticated) {
+      // Giving needs an account so the receipt is retrievable later.
+      setAuthOpen(true);
+      return;
+    }
+    await doSubmit();
   };
 
   const inputCls = (err?: string) =>
@@ -364,6 +368,7 @@ export default function Donate() {
       <AuthModal
         open={authOpen}
         onOpenChange={setAuthOpen}
+        onSignedIn={() => void doSubmit()}
         contextLabel="give"
       />
     </section>
