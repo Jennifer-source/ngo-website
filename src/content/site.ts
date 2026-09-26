@@ -66,7 +66,7 @@ export const JOURNEY_OPENING = {
     "to action.",
   ],
   intro:
-    "A movement rarely begins with a plan. Ours began with people, prayer, and a willingness to show up. The chapters below are placeholders shaped for the real story — ready to carry your photographs and your words.",
+    "A movement rarely begins with a plan. This one began with people, prayer, and a willingness to show up. The chapters that follow trace the road so far — and the road ahead.",
 };
 
 export const JOURNEY_MILESTONES: JourneyMilestone[] = [
@@ -150,7 +150,7 @@ export const IMPACT = {
   label: "Impact",
   statementLines: ["A small act of grace", "can travel far."],
   intro:
-    "Where the journey has reached — and where it is going. Real figures will be added here as they are verified by the ministry.",
+    "Where the journey has reached, and where it is going next. Figures are published here only once they have been verified and recorded by the trust.",
   /** Regions only. No invented statistics. */
   regions: [
     {
@@ -187,7 +187,7 @@ export const FILM = {
   label: "Our journey",
   title: "Film",
   description:
-    "Placeholder — a short documentary, cut with care, telling the story of the ministry in the community's own words.",
+    "A short documentary on the work — the people, the places and the quiet hours in between — told in the community's own words.",
   /** Set the ministry's documentary URL here (mp4 or embed provider). */
   videoUrl: "" as string,
   /** Poster shown before playback. */
@@ -217,7 +217,7 @@ export const SOCIAL = {
   label: "Follow the journey",
   kinetic: ["Watch.", "Share.", "Pray.", "Serve."],
   intro:
-    "Moments from the field, weekly. Official channels will be connected here as they launch.",
+    "Field notes, stories and announcements from the work. For press requests or collaboration enquiries, please write to us through the contact chapter below.",
 };
 
 export const SOCIAL_HANDLES: SocialHandle[] = [
@@ -276,7 +276,7 @@ export const FOUNDERS_INTRO = {
   label: "The founders",
   statementLines: ["The people", "behind the", "mission."],
   intro:
-    "Placeholder biographies — to be replaced with the founders' real stories, in their own words.",
+    "The trust is led by its founders, supported by a board of trustees and accountable to every partner and donor who walks with it.",
 };
 
 export const FOUNDERS: Founder[] = [
@@ -401,7 +401,7 @@ export const IMPACT_STORIES_INTRO = {
   label: "Impact in action",
   statementLines: ["Where impact", "becomes personal."],
   intro:
-    "Story structures awaiting the ministry's real accounts. Every story here will be told with consent, dignity and care.",
+    "Behind every figure is a face. These accounts are drawn from the trust's own records and are shared only with consent — told with dignity, never as spectacle.",
 };
 
 export const IMPACT_STORIES: ImpactStory[] = [
@@ -551,7 +551,7 @@ export const TALK_TO_US = {
   label: "Talk to us",
   statementLines: ["Some journeys", "begin with", "a conversation."],
   intro:
-    "Whatever brought you here — curiosity, calling, or a question — you are welcome to start here.",
+    "Whether you are exploring a partnership, considering volunteering, or simply wish to understand the work more closely — this is the place to begin. Every enquiry receives a personal reply.",
   pathways: [
     { id: "general", label: "General enquiry" },
     { id: "volunteer", label: "Volunteer" },
@@ -562,6 +562,18 @@ export const TALK_TO_US = {
   cta: "Start a conversation",
 };
 
+/** For organisations considering corporate giving or programme partnership. */
+export const PARTNERSHIP = {
+  title: "For organisations",
+  lines: [
+    "Corporate social responsibility programmes designed around your goals and measured against agreed outcomes.",
+    "Programme partnerships for institutions and foundations that share a commitment to dignity and long-term change.",
+    "In-kind partnerships for professional services, logistics and skills.",
+  ],
+  note:
+    "Partners receive regular field documentation, audited statements and a named point of contact.",
+};
+
 /* ------------------------------------------------------------------ */
 /* Donate — trust-first. No payment processor configured in v1.        */
 /* ------------------------------------------------------------------ */
@@ -570,7 +582,7 @@ export const DONATE = {
   label: "Donate",
   statementLines: ["Your generosity", "becomes someone's", "next step."],
   intro:
-    "Give once, or give monthly. Every gift is stewarded with care and recorded by the trust.",
+    "Give once, or commit to the work month by month. Every contribution is stewarded with care, recorded by the trust, and acknowledged with a receipt.",
   frequencies: [
     { id: "one-time", label: "One time" },
     { id: "monthly", label: "Monthly" },
@@ -579,7 +591,7 @@ export const DONATE = {
   amounts: [500, 1000, 2500, 5000],
   customRange: { min: 100, max: 500000 },
   secureNote:
-    "Your details are stored securely and used only for this contribution.",
+    "Payments are processed over an encrypted connection by an accredited payment provider, and no card details are stored on this website. Receipts are issued for every contribution.",
   /** Official payment details — left empty until the ministry provides them. */
   bankDetails: null as
     | { accountName: string; accountNumber: string; ifsc: string; bank: string }
@@ -625,5 +637,5 @@ export const CONTACT = {
   email: null as string | null,
   phone: null as string | null,
   address: null as string | null,
-  hours: "We aim to respond within a few days.",
+  hours: "Enquiries receive a personal reply, usually within two working days.",
 };

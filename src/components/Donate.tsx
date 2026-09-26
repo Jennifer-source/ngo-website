@@ -1,8 +1,8 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import { useMutation } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { DONATE, CHAPTER_COUNT, CONTACT } from "@/content/site";
+import { DONATE, PARTNERSHIP, CHAPTER_COUNT, CONTACT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
@@ -11,12 +11,13 @@ type Status = "idle" | "sending" | "success" | "error";
 
 /**
  * Chapter 11 — Donate.
- * Trust-first. Clear amounts, no invented impact claims, no invented
- * bank details. The gift intent is recorded securely; a payment provider
- * (e.g. Razorpay) can be connected when the ministry is ready.
+ * Trust-first giving: clear amounts, encrypted hosted checkout, and a
+ * personal follow-up path when online payment is not yet configured.
+ * No invented impact claims, no invented bank details.
  */
 export default function Donate() {
-  const submitIntent = useMutation(api.donations.submitDonationIntent);
+  const createCheckout = useAction(api.donations.createDonationCheckout);
+  const verify = useAction(api.donations.verifyDonation);
   const [frequency, setFrequency] = useState<Frequency>("one-time");
   const [amount, setAmount] = useState<number>(DONATE.amounts[1]);
   const [custom, setCustom] = useState("");
@@ -26,6 +27,9 @@ export default function Donate() {
   const [status, setStatus] = useState<Status>("idle");
   const [reference, setReference] = useState("");
   const [serverError, setServerError] = useState("");
+  const [intentMode, setIntentMode] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [notice, setNotice] = useState("");
 
   const finalAmount = isCustom ? Number(custom || 0) : amount;
 
@@ -63,21 +67,71 @@ export default function Donate() {
     setStatus("sending");
     setServerError("");
     try {
-      const res = await submitIntent({
-        name: values.name.trim(),
-        email: values.email.trim(),
-        phone: values.phone.trim() || undefined,
+      const res = await createCheckout({
+        donorName: values.name.trim(),
+        donorEmail: values.email.trim(),
         frequency,
         amountInr: finalAmount,
         message: values.message.trim() || undefined,
       });
+      if (res.mode === "checkout" && res.url) {
+        /* Hand off to the secure, encrypted checkout — card details never
+           touch our systems. */
+        window.location.href = res.url;
+        return;
+      }
+      /* No payment keys configured yet: the intent is recorded for the
+         ministry to follow up personally. */
       setReference(res.reference);
+      setIntentMode(true);
       setStatus("success");
     } catch {
       setStatus("error");
-      setServerError("The gift could not be recorded just now. Please try again in a moment.");
+      setServerError(
+        "The gift could not be processed just now. Please try again in a moment — or write to us directly.",
+      );
     }
   };
+
+  /* Returning from secure checkout: verify and confirm quietly. */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const state = params.get("donation");
+    if (!state) return;
+    params.delete("donation");
+    params.delete("session_id");
+    const qs = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${qs ? `?${qs}` : ""}`,
+    );
+
+    if (state === "cancelled") {
+      setNotice(
+        "Your checkout was closed and nothing was charged. Whenever you are ready, your gift will be received with gratitude.",
+      );
+      return;
+    }
+
+    if (state === "success") {
+      setStatus("sending");
+      const sessionId = params.get("session_id");
+      void (async () => {
+        let paid = false;
+        if (sessionId) {
+          try {
+            const r = await verify({ sessionId });
+            paid = !!r.paid;
+          } catch {
+            paid = false;
+          }
+        }
+        setVerified(paid);
+        setStatus("success");
+      })();
+    }
+  }, [verify]);
 
   const inputCls = (err?: string) =>
     cn(
@@ -127,6 +181,36 @@ export default function Donate() {
                 )}
               </div>
             </FadeIn>
+
+            {/* For organisations — CSR and institutional giving */}
+            <FadeIn delay={0.45}>
+              <div className="mt-10 border border-ink/10 bg-ivory p-6">
+                <p className="editorial-label mb-4 text-rust">{PARTNERSHIP.title}</p>
+                <ul className="space-y-3">
+                  {PARTNERSHIP.lines.map((l, i) => (
+                    <li key={i} className="flex gap-3 text-[0.85rem] leading-relaxed text-charcoal/85">
+                      <span aria-hidden className="mt-2 h-1 w-1 shrink-0 rounded-full bg-sun" />
+                      {l}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 border-t border-ink/10 pt-4 text-[0.8rem] leading-relaxed text-smoke">
+                  {PARTNERSHIP.note}
+                </p>
+                <a
+                  href="#talk-to-us"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .querySelector("#talk-to-us")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="editorial-label link-reveal mt-5 inline-block text-clay"
+                >
+                  Discuss a partnership →
+                </a>
+              </div>
+            </FadeIn>
           </div>
 
           {/* Form card */}
@@ -155,15 +239,29 @@ export default function Donate() {
                     </motion.span>
                   </motion.div>
                   <h3 className="mt-8 font-serif text-3xl text-charcoal">
-                    Your generosity is on its way.
+                    {intentMode
+                      ? "Your intention to give has been received."
+                      : "Your gift has been received."
+                    }
                   </h3>
                   <p className="mt-3 max-w-sm text-[0.9rem] leading-relaxed text-smoke">
-                    Thank you for sowing into the journey. Your intent to give{" "}
-                    <strong className="text-charcoal">
-                      {formatInr(finalAmount)} {frequency === "monthly" ? "monthly" : "once"}
-                    </strong>{" "}
-                    has been recorded{reference ? ` — reference ${reference}` : ""}. The
-                    ministry team will reach out shortly with the next step.
+                    {intentMode ? (
+                      <>
+                        Thank you for sowing into the journey. Your intention to give{" "}
+                        <strong className="text-charcoal">
+                          {formatInr(finalAmount)} {frequency === "monthly" ? "monthly" : "once"}
+                        </strong>{" "}
+                        has been recorded{reference ? ` — reference ${reference}` : ""}. A
+                        member of the team will write to you personally with the next
+                        step.
+                      </>
+                    ) : (
+                      <>
+                        Thank you for sowing into the journey. Your{" "}
+                        {verified ? "payment has been confirmed" : "gift is being confirmed"}{" "}
+                        and a receipt is on its way to your inbox.
+                      </>
+                    )}
                   </p>
                   <button
                     type="button"
@@ -175,6 +273,11 @@ export default function Donate() {
                 </motion.div>
               ) : (
                 <form onSubmit={onSubmit} noValidate>
+                  {notice && (
+                    <p className="mb-7 border-l-2 border-sunlight bg-mist/70 px-4 py-3 text-[0.85rem] leading-relaxed text-charcoal/85">
+                      {notice}
+                    </p>
+                  )}
                   {/* Frequency */}
                   <div role="radiogroup" aria-label="Donation frequency" className="grid grid-cols-2 gap-1 border border-ink/10 p-1">
                     {DONATE.frequencies.map((f) => (
@@ -341,7 +444,8 @@ export default function Donate() {
                         : `Give ${finalAmount > 0 ? formatInr(finalAmount) : ""} ${frequency === "monthly" ? "monthly" : "now"}`}
                     </MagneticButton>
                     <p className="editorial-label mt-4 text-[0.6rem] text-smoke/70">
-                      Securely recorded · No hidden charges · Cancel anytime for monthly gifts
+                      Payments are processed over an encrypted connection · No card
+                      details are stored on this website
                     </p>
                   </div>
                 </form>
