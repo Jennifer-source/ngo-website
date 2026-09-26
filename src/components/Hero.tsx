@@ -44,9 +44,10 @@ export default function Hero() {
             className="h-full w-full object-cover object-[32%_center]"
           />
         ) : (
-          /* Warm fallback stage while the artwork file is not yet present —
-             avoids a broken-image render; swap in the file to activate. */
-          <div className="h-full w-full bg-gradient-to-br from-clay via-rust to-sun" />
+          /* Neutral dark stage while the artwork file is not yet present —
+             deliberately NOT a stand-in for the artwork. The section's own
+             ink background shows; no substitute visual is rendered. */
+          <div className="h-full w-full bg-ink" />
         )}
       </motion.div>
 
