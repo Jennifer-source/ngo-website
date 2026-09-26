@@ -49,11 +49,14 @@ export default function AuthModal({
     }
     setBusy(true);
     try {
+      // The Password provider accepts exactly "signUp" | "signIn" — map the
+      // mode to the literal explicitly so no other value can ever be sent.
+      const flow = mode === "signUp" ? "signUp" : "signIn";
       await signIn("password", {
-        flow: mode,
+        flow,
         email: form.email.trim(),
         password: form.password,
-        ...(mode === "signUp" ? { name: form.name.trim() } : {}),
+        ...(flow === "signUp" ? { name: form.name.trim() } : {}),
       });
       onSignedIn?.();
       onOpenChange(false);
