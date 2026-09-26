@@ -36,9 +36,6 @@ export default function ImpactMap() {
 
             {/* Verified metrics — numbers lead, labels follow. */}
             <div className="mt-14">
-              <p className="editorial-label mb-5 text-smoke/80">
-                The verified record — and it continues to grow
-              </p>
               <dl className="divide-y divide-ink/10 border-y border-ink/10">
                 {IMPACT.fields.map((f, i) => (
                   <motion.div

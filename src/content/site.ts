@@ -150,13 +150,13 @@ export const IMPACT = {
   label: "Impact",
   statementLines: ["A small act of grace", "can travel far."],
   intro:
-    "Where the journey has reached, and where it is going next. The figures shown here are verified and recorded by the trust — and the record continues to grow.",
+    "Where the journey has reached, and where it is going next.",
   /** Regions only. No invented statistics. */
   regions: [
     {
       id: "india",
       name: "India",
-      detail: "Community outreach, education support and care initiatives.",
+      detail: "Community outreach, care initiatives, and meals served.",
       x: 71.9,
       y: 39.5,
     },
