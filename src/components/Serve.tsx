@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { SERVE, SERVE_PATHWAYS, CHAPTER_COUNT } from "@/content/site";
+import { useServeContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
@@ -11,9 +12,10 @@ import { cn } from "@/lib/utils";
  * transforms the stage.
  */
 export default function Serve() {
+  const { pathways, label, statementLines } = useServeContent();
   const reduced = useReducedMotion();
   const [activeId, setActiveId] = useState<string>("volunteer");
-  const active = SERVE_PATHWAYS.find((p) => p.id === activeId) ?? SERVE_PATHWAYS[0];
+  const active = pathways.find((p) => p.id === activeId) ?? pathways[0];
 
   return (
     <section
@@ -24,10 +26,10 @@ export default function Serve() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-4">
-            <SectionHeader label={SERVE.label} chapter={6} total={CHAPTER_COUNT} />
+            <SectionHeader label={label} chapter={6} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
-              lines={SERVE.statementLines}
+              lines={statementLines}
               className="mt-10 font-serif text-[clamp(2.2rem,4.6vw,4.2rem)] leading-[1.06] text-charcoal"
             />
             <FadeIn delay={0.25}>
@@ -61,7 +63,7 @@ function ServeOrbit({
   activeId: string;
   onSelect: (id: string) => void;
   reduced: boolean;
-  active: (typeof SERVE_PATHWAYS)[number];
+  active: ReturnType<typeof useServeContent>["pathways"][number];
 }) {
   return (
     <div className="lg:flex lg:items-center lg:gap-10">
@@ -83,7 +85,7 @@ function ServeOrbit({
             >
               <p className="editorial-label mb-3 text-rust">
                 Pathway{" "}
-                {String(SERVE_PATHWAYS.findIndex((p) => p.id === active.id) + 1).padStart(2, "0")}
+                {String(pathways.findIndex((p) => p.id === active.id) + 1).padStart(2, "0")}
               </p>
               <h3 className="font-serif text-3xl text-charcoal md:text-4xl">{active.title}</h3>
               <div className="mt-4 space-y-1">
@@ -110,7 +112,7 @@ function ServeOrbit({
 
         {/* Pathway nodes on the orbit */}
         <ul aria-label="Serve pathways" className="absolute inset-0">
-          {SERVE_PATHWAYS.map((p, i) => {
+          {pathways.map((p, i) => {
             const angle = (i / SERVE_PATHWAYS.length) * 2 * Math.PI - Math.PI / 2;
             const px = 50 + Math.cos(angle) * 50;
             const py = 50 + Math.sin(angle) * 50;
@@ -159,7 +161,7 @@ function ServeOrbit({
             >
               <p className="editorial-label mb-2 text-rust">
                 Pathway{" "}
-                {String(SERVE_PATHWAYS.findIndex((p) => p.id === active.id) + 1).padStart(2, "0")}
+                {String(pathways.findIndex((p) => p.id === active.id) + 1).padStart(2, "0")}
               </p>
               <h3 className="font-serif text-3xl text-charcoal">{active.title}</h3>
               <div className="mt-3 space-y-1">
@@ -182,7 +184,7 @@ function ServeOrbit({
           aria-label="Serve pathways"
           className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:hidden"
         >
-          {SERVE_PATHWAYS.map((p) => {
+          {pathways.map((p) => {
             const isActive = p.id === activeId;
             return (
               <li key={p.id}>

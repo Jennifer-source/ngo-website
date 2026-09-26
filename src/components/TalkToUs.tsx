@@ -2,9 +2,12 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { TALK_TO_US, CHAPTER_COUNT, CONTACT } from "@/content/site";
+import { useTalkToUsContent, useContactContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
+import AuthModal from "./AuthModal";
+import { useAuth } from "@/hooks/use-auth";
 
 type PathwayId = "general" | "volunteer" | "partnership" | "prayer" | "media";
 type Status = "idle" | "sending" | "success" | "error";
@@ -16,7 +19,12 @@ type Status = "idle" | "sending" | "success" | "error";
  * persist to Convex.
  */
 export default function TalkToUs() {
-  const submit = useMutation(api.conversations.submitConversation);
+  const talk = useTalkToUsContent();
+  const contact = useContactContent();
+  const submit = useMutation(api.messages.submitMessage);
+  const { isLoading: authLoading, isAuthenticated } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
   const [pathway, setPathway] = useState<PathwayId>("general");
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -33,19 +41,15 @@ export default function TalkToUs() {
     return e;
   };
 
-  const onSubmit = async (ev: FormEvent) => {
-    ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-    if (Object.keys(e).length > 0) return;
+  const doSubmit = async () => {
     setStatus("sending");
     setServerError("");
     try {
       await submit({
+        type: pathway,
         name: values.name.trim(),
         email: values.email.trim(),
         phone: values.phone.trim() || undefined,
-        pathway,
         message: values.message.trim(),
       });
       setStatus("success");
@@ -55,6 +59,20 @@ export default function TalkToUs() {
         "The message could not be sent just now. Please try again in a moment.",
       );
     }
+  };
+
+  const onSubmit = async (ev: FormEvent) => {
+    ev.preventDefault();
+    const e = validate();
+    setErrors(e);
+    if (Object.keys(e).length > 0) return;
+    if (!authLoading && !isAuthenticated) {
+      // Action needs identity: show the simple account modal first.
+      setPendingSubmit(true);
+      setAuthOpen(true);
+      return;
+    }
+    await doSubmit();
   };
 
   const inputCls = (err?: string) =>
@@ -72,21 +90,21 @@ export default function TalkToUs() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-5">
-            <SectionHeader label={TALK_TO_US.label} chapter={8} total={CHAPTER_COUNT} />
+            <SectionHeader label={talk.label} chapter={8} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
-              lines={TALK_TO_US.statementLines}
+              lines={talk.statementLines}
               className="mt-10 font-serif text-[clamp(2.4rem,5.5vw,5rem)] leading-[1.04] text-charcoal"
             />
             <FadeIn delay={0.25}>
               <p className="mt-8 max-w-md text-[0.95rem] leading-relaxed text-smoke">
-                {TALK_TO_US.intro}
+                {talk.intro}
               </p>
               <div className="mt-10 space-y-2 border-t border-ink/10 pt-6">
-                {CONTACT.email && <p className="text-[0.9rem] text-charcoal/80">{CONTACT.email}</p>}
-                {CONTACT.phone && <p className="text-[0.9rem] text-charcoal/80">{CONTACT.phone}</p>}
-                {CONTACT.hours && (
-                  <p className="editorial-label pt-2 text-smoke/70">{CONTACT.hours}</p>
+                {contact.email && <p className="text-[0.9rem] text-charcoal/80">{contact.email}</p>}
+                {contact.phone && <p className="text-[0.9rem] text-charcoal/80">{contact.phone}</p>}
+                {contact.hours && (
+                  <p className="editorial-label pt-2 text-smoke/70">{contact.hours}</p>
                 )}
               </div>
             </FadeIn>
@@ -152,7 +170,7 @@ export default function TalkToUs() {
                       What is this about?
                     </legend>
                     <div className="flex flex-wrap gap-2">
-                      {TALK_TO_US.pathways.map((p) => (
+                      {talk.pathways.map((p) => (
                         <button
                           key={p.id}
                           type="button"
@@ -237,7 +255,7 @@ export default function TalkToUs() {
 
                   <div className="mt-9 flex flex-wrap items-center gap-5">
                     <MagneticButton type="submit" disabled={status === "sending"}>
-                      {status === "sending" ? "Sending…" : TALK_TO_US.cta}
+                      {status === "sending" ? "Sending…" : talk.cta}
                     </MagneticButton>
                     <p className="editorial-label text-[0.6rem] text-smoke/70">
                       Your message stays private.
@@ -249,6 +267,20 @@ export default function TalkToUs() {
           </div>
         </div>
       </div>
+
+      {/* Identity gate — only when submitting; browsing never requires it. */}
+      <AuthModal
+        open={authOpen}
+        onOpenChange={(o) => {
+          setAuthOpen(o);
+          if (!o) setPendingSubmit(false);
+        }}
+        onSignedIn={() => {
+          setPendingSubmit(false);
+          void doSubmit();
+        }}
+        contextLabel="send your message"
+      />
     </section>
   );
 }

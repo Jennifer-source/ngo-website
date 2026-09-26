@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { IMPACT, CHAPTER_COUNT } from "@/content/site";
+import { useImpactContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
  * world map. Figures render only when verified — missing values hold an em dash.
  */
 export default function ImpactMap() {
+  const impact = useImpactContent();
   const reduced = useReducedMotion();
   const [activeRegion, setActiveRegion] = useState<string | null>("india");
 
@@ -22,22 +24,22 @@ export default function ImpactMap() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-5">
-            <SectionHeader label={IMPACT.label} chapter={2} total={CHAPTER_COUNT} />
+            <SectionHeader label={impact.label} chapter={2} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
-              lines={IMPACT.statementLines}
+              lines={impact.statementLines}
               className="mt-10 font-serif text-[clamp(2.4rem,5.5vw,5rem)] leading-[1.04] text-charcoal"
             />
             <FadeIn delay={0.3}>
               <p className="mt-8 max-w-md text-[0.95rem] leading-relaxed text-smoke">
-                {IMPACT.intro}
+                {impact.intro}
               </p>
             </FadeIn>
 
             {/* Verified metrics — numbers lead, labels follow. */}
             <div className="mt-14">
               <dl className="divide-y divide-ink/10 border-y border-ink/10">
-                {IMPACT.fields.map((f, i) => (
+                {impact.fields.map((f, i) => (
                   <motion.div
                     key={f.id}
                     initial={{ opacity: 0, x: -16 }}
@@ -70,7 +72,7 @@ export default function ImpactMap() {
               <WorldDots />
 
               {/* Region pulses */}
-              {IMPACT.regions.map((r, i) => (
+              {impact.regions.map((r, i) => (
                 <button
                   key={r.id}
                   type="button"
@@ -118,10 +120,10 @@ export default function ImpactMap() {
                   className="mt-2 border-l-2 border-sunlight bg-mist/60 p-6"
                 >
                   <p className="editorial-label mb-2 text-rust">
-                    {IMPACT.regions.find((r) => r.id === activeRegion)?.name}
+                    {impact.regions.find((r) => r.id === activeRegion)?.name}
                   </p>
                   <p className="max-w-xl text-[0.9rem] leading-relaxed text-charcoal/85">
-                    {IMPACT.regions.find((r) => r.id === activeRegion)?.detail}
+                    {impact.regions.find((r) => r.id === activeRegion)?.detail}
                   </p>
                 </motion.div>
               )}

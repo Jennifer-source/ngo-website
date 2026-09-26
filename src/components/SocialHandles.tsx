@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { SOCIAL, SOCIAL_HANDLES, CHAPTER_COUNT } from "@/content/site";
+import { useSocialContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, FadeIn } from "./motion/Primitives";
 
 /**
@@ -9,7 +10,8 @@ import { EASE, SectionHeader, FadeIn } from "./motion/Primitives";
  * dead link.
  */
 export default function SocialHandles() {
-  const marquee = [...SOCIAL_HANDLES, ...SOCIAL_HANDLES];
+  const social = useSocialContent();
+  const marquee = [...social.handles, ...social.handles];
 
   return (
     <section
@@ -20,10 +22,10 @@ export default function SocialHandles() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <div>
-            <SectionHeader label={SOCIAL.label} chapter={4} total={CHAPTER_COUNT} />
+            <SectionHeader label={social.label} chapter={4} total={CHAPTER_COUNT} />
             <FadeIn>
               <p className="mt-8 max-w-md text-[0.95rem] leading-relaxed text-smoke">
-                {SOCIAL.intro}
+                {social.intro}
               </p>
             </FadeIn>
           </div>
@@ -37,7 +39,7 @@ export default function SocialHandles() {
           animate={{ x: ["0%", "-50%"] }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         >
-          {[...SOCIAL.kinetic, ...SOCIAL.kinetic, ...SOCIAL.kinetic].map(
+          {[...social.kinetic, ...social.kinetic, ...social.kinetic].map(
             (word, i) => (
               <span
                 key={i}

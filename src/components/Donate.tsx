@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "re
 import { motion } from "framer-motion";
 import { useAction, useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
-import { DONATE, PARTNERSHIP, CHAPTER_COUNT, CONTACT } from "@/content/site";
+import { useDonateContent, useContactContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
+import AuthModal from "./AuthModal";
+import { useAuth } from "@/hooks/use-auth";
 
 type Frequency = "one-time" | "monthly";
 type Status = "idle" | "sending" | "success" | "error";
@@ -16,8 +19,13 @@ type Status = "idle" | "sending" | "success" | "error";
  * No invented impact claims, no invented bank details.
  */
 export default function Donate() {
-  const createCheckout = useAction(api.donations.createDonationCheckout);
+  const donate = useDonateContent();
+  const contact = useContactContent();
+  const createDonation = useMutation(api.donations.createDonation);
+  const getCheckoutUrl = useMutation(api.donations.getSandboxCheckoutUrl);
   const verify = useAction(api.donations.verifyDonation);
+  const { isLoading: authLoading, isAuthenticated } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
   const [frequency, setFrequency] = useState<Frequency>("one-time");
   const [amount, setAmount] = useState<number>(DONATE.amounts[1]);
   const [custom, setCustom] = useState("");

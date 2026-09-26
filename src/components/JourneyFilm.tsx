@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { FILM, CHAPTER_COUNT } from "@/content/site";
+import { useFilmContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, FilmGrain, SectionHeader } from "./motion/Primitives";
 
 /**
@@ -9,6 +10,7 @@ import { EASE, FilmGrain, SectionHeader } from "./motion/Primitives";
  * control expands the stage into an immersive viewing mode.
  */
 export default function JourneyFilm() {
+  const film = useFilmContent();
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
@@ -17,7 +19,7 @@ export default function JourneyFilm() {
   });
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1, 0.96]);
 
-  const hasVideo = !!FILM.videoUrl;
+  const hasVideo = !!film.videoUrl;
 
   return (
     <section
@@ -29,14 +31,14 @@ export default function JourneyFilm() {
       <FilmGrain opacity={0.22} />
 
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 md:px-12">
-        <SectionHeader label={FILM.label} chapter={3} total={CHAPTER_COUNT} light />
+        <SectionHeader label={film.label} chapter={3} total={CHAPTER_COUNT} light />
 
         <h2 className="mt-12 font-serif leading-[0.98]">
           <span className="block text-[clamp(2.6rem,7vw,6.5rem)] text-ivory">
-            {FILM.label}
+            {film.label}
           </span>
           <span className="block text-[clamp(2.6rem,7vw,6.5rem)] italic text-sunlight">
-            {FILM.title}
+            {film.title}
           </span>
         </h2>
 
@@ -49,8 +51,8 @@ export default function JourneyFilm() {
             {/* Poster / video */}
             {playing && hasVideo ? (
               <video
-                src={FILM.videoUrl}
-                poster={FILM.poster.src}
+                src={film.videoUrl}
+                poster={film.poster.src}
                 controls
                 autoPlay
                 playsInline
@@ -59,8 +61,8 @@ export default function JourneyFilm() {
             ) : (
               <div className="duotone absolute inset-0">
                 <img
-                  src={FILM.poster.src}
-                  alt={FILM.poster.alt}
+                  src={film.poster.src}
+                  alt={film.poster.alt}
                   loading="lazy"
                   decoding="async"
                   className="h-full w-full object-cover"
@@ -118,7 +120,7 @@ export default function JourneyFilm() {
 
           {/* Frame metadata */}
           <div className="mt-5 flex items-center justify-between">
-            <p className="editorial-label text-mist/50">{FILM.label} / {FILM.title}</p>
+            <p className="editorial-label text-mist/50">{film.label} / {film.title}</p>
             <p className="editorial-label text-mist/50">Documentary · Placeholder poster</p>
           </div>
         </motion.div>
@@ -126,7 +128,7 @@ export default function JourneyFilm() {
         {/* Closing statement */}
         <blockquote className="mx-auto mt-20 max-w-3xl text-center">
           <p className="font-serif text-[clamp(1.6rem,3.4vw,2.6rem)] leading-snug text-mist/90">
-            “{FILM.closingQuote}”
+            “{film.closingQuote}”
           </p>
         </blockquote>
       </div>

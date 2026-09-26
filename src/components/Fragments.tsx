@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { FRAGMENTS, FRAGMENTS_ITEMS, CHAPTER_COUNT } from "@/content/site";
+import { useFragmentsContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
  * rhythms. Captions read like field notes.
  */
 export default function Fragments() {
+  const fragments = useFragmentsContent();
   return (
     <section
       id="fragments"
@@ -18,23 +20,23 @@ export default function Fragments() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <div>
-            <SectionHeader label={FRAGMENTS.label} chapter={7} total={CHAPTER_COUNT} />
+            <SectionHeader label={fragments.label} chapter={7} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
-              lines={FRAGMENTS.statementLines}
+              lines={fragments.statementLines}
               className="mt-10 font-serif text-[clamp(2.4rem,5.5vw,5rem)] leading-[1.04] text-charcoal"
             />
           </div>
           <FadeIn delay={0.2}>
             <p className="max-w-sm text-[0.95rem] leading-relaxed text-smoke">
-              {FRAGMENTS.intro}
+              {fragments.intro}
             </p>
           </FadeIn>
         </div>
 
         {/* Asymmetric editorial grid */}
         <div className="mt-20 grid grid-cols-12 gap-4 md:gap-6">
-          {FRAGMENTS_ITEMS.map((f, i) => (
+          {fragments.items.map((f, i) => (
             <FragmentCard key={f.id} fragment={f} index={i} />
           ))}
         </div>
@@ -47,7 +49,7 @@ function FragmentCard({
   fragment,
   index,
 }: {
-  fragment: (typeof FRAGMENTS_ITEMS)[number];
+  fragment: ReturnType<typeof useFragmentsContent>["items"][number];
   index: number;
 }) {
   /* Editorial spans — each fragment earns its own shape */

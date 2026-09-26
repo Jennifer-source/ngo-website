@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { FOUNDERS, FOUNDERS_INTRO, CHAPTER_COUNT } from "@/content/site";
+import { useFoundersContent } from "@/hooks/use-site-content";
+import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
  * Editorial portraits, each founder unfolding on their own scroll beat.
  */
 export default function Founders() {
+  const { founders, label } = useFoundersContent();
   const reduced = useReducedMotion();
 
   return (
@@ -17,11 +19,11 @@ export default function Founders() {
       className="relative bg-mist py-28 md:py-40"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <SectionHeader label={FOUNDERS_INTRO.label} chapter={5} total={CHAPTER_COUNT} />
+        <SectionHeader label={label} chapter={5} total={CHAPTER_COUNT} />
 
         {/* Founder chapters */}
         <div className="mt-24 space-y-28 md:space-y-40">
-          {FOUNDERS.map((f, idx) => (
+          {founders.map((f, idx) => (
             <FounderChapter key={f.name} founder={f} index={idx} reduced={!!reduced} />
           ))}
         </div>
@@ -35,7 +37,7 @@ function FounderChapter({
   index,
   reduced,
 }: {
-  founder: (typeof FOUNDERS)[number];
+  founder: ReturnType<typeof useFoundersContent>["founders"][number];
   index: number;
   reduced: boolean;
 }) {

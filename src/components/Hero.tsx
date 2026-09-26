@@ -5,10 +5,11 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { HERO } from "@/content/site";
+import { useHeroContent } from "@/hooks/use-site-content";
 import { EASE, FilmGrain } from "./motion/Primitives";
 
 export default function Hero() {
+  const hero = useHeroContent();
   const ref = useRef<HTMLElement | null>(null);
   const reduced = useReducedMotion();
   const [artworkReady, setArtworkReady] = useState(true);
@@ -36,8 +37,8 @@ export default function Hero() {
       <motion.div className="absolute inset-0" style={reduced ? undefined : { y: imgY, scale: imgScale }}>
         {artworkReady ? (
           <img
-            src={HERO.image.src}
-            alt={HERO.image.alt}
+            src={hero.image.src}
+            alt={hero.image.alt}
             fetchPriority="high"
             decoding="async"
             onError={() => setArtworkReady(false)}
@@ -62,7 +63,7 @@ export default function Hero() {
         <div className="max-w-5xl">
           {/* Site headline hidden per direction — the artwork carries its own.
               Kept for screen readers and document outline. */}
-          <h1 className="sr-only">{HERO.titleLines.join(" ")}</h1>
+          <h1 className="sr-only">{hero.titleLines.join(" ")}</h1>
 
           <motion.p
             initial={{ opacity: 0 }}
@@ -71,7 +72,7 @@ export default function Hero() {
             className="editorial-label sr-only flex items-center gap-4 text-apricot"
           >
             <span aria-hidden className="h-px w-10 bg-apricot/70" />
-            {HERO.kicker}
+            {hero.kicker}
           </motion.p>
 
           <motion.p
@@ -80,7 +81,7 @@ export default function Hero() {
             transition={{ duration: 1, ease: EASE, delay: 1.25 }}
             className="sr-only mt-8 max-w-md text-[0.95rem] leading-relaxed text-mist/85"
           >
-            {HERO.subline}
+            {hero.subline}
           </motion.p>
 
 
