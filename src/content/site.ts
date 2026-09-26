@@ -271,38 +271,38 @@ export const FOUNDERS_INTRO = {
 
 export const FOUNDERS: Founder[] = [
   {
-    name: "PS NKM Joshus Naanapogula",
+    name: "PS. Joshua Nayanapogula",
     role: "Founder",
     story: "",
     vision: "",
     contribution: "",
     image: {
       src: "/assets/founder-1.jpg",
-      alt: "Portrait of PS NKM Joshus Naanapogula, Founder",
+      alt: "Portrait of PS. Joshua Nayanapogula, Founder",
       editable: true,
     },
   },
   {
-    name: "PS. Joffynayanapogula",
+    name: "PS. Joffy Nayanapogula",
     role: "Founder",
     story: "",
     vision: "",
     contribution: "",
     image: {
       src: "/assets/founder-2.jpg",
-      alt: "Portrait of PS. Joffynayanapogula, Founder",
+      alt: "Portrait of PS. Joffy Nayanapogula, Founder",
       editable: true,
     },
   },
   {
-    name: "Mr. Joffy Nayanapogula",
+    name: "Mr. Shalom Joshua Nayanapogula",
     role: "Co-Founder",
     story: "",
     vision: "",
     contribution: "",
     image: {
       src: "/assets/cofounder.jpg",
-      alt: "Portrait of Mr. Joffy Nayanapogula, Co-Founder",
+      alt: "Portrait of Mr. Shalom Joshua Nayanapogula, Co-Founder",
       editable: true,
     },
   },
