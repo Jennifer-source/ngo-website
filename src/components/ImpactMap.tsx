@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 /**
  * Chapter 02 — Impact.
  * A quiet cartographic system: illuminated regions pulse on a minimal
- * world map. No invented statistics — only editable, verified-to-come fields.
+ * world map. Figures render only when verified — missing values hold an em dash.
  */
 export default function ImpactMap() {
   const reduced = useReducedMotion();
@@ -34,10 +34,11 @@ export default function ImpactMap() {
               </p>
             </FadeIn>
 
-            {/* Editable qualitative fields — verified values arrive later */}
+            {/* Verified metrics — numbers lead, labels follow; figures still
+                awaiting verification hold an em dash until recorded. */}
             <div className="mt-14">
               <p className="editorial-label mb-5 text-smoke/80">
-                The record — to be filled with verified figures
+                The verified record — and it continues to grow
               </p>
               <dl className="divide-y divide-ink/10 border-y border-ink/10">
                 {IMPACT.fields.map((f, i) => (
@@ -50,7 +51,14 @@ export default function ImpactMap() {
                     className="group flex items-baseline justify-between gap-6 py-4"
                   >
                     <dt className="editorial-label text-ink/70">{f.label}</dt>
-                    <dd className="font-serif text-2xl tabular-nums text-rust/40 transition-colors duration-500 group-focus-within:text-rust group-hover:text-rust">
+                    <dd
+                      className={cn(
+                        "font-serif tabular-nums leading-none transition-colors duration-500",
+                        f.value
+                          ? "text-[clamp(2.2rem,4vw,3.2rem)] text-rust"
+                          : "text-2xl text-rust/40 group-focus-within:text-rust group-hover:text-rust",
+                      )}
+                    >
                       {f.value ? f.value : "—"}
                     </dd>
                   </motion.div>

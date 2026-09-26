@@ -150,7 +150,7 @@ export const IMPACT = {
   label: "Impact",
   statementLines: ["A small act of grace", "can travel far."],
   intro:
-    "Where the journey has reached, and where it is going next. Figures are published here only once they have been verified and recorded by the trust.",
+    "Where the journey has reached, and where it is going next. The figures shown here are verified and recorded by the trust — and the record continues to grow.",
   /** Regions only. No invented statistics. */
   regions: [
     {
@@ -169,13 +169,14 @@ export const IMPACT = {
     },
     { id: "africa", name: "Eastern Africa", detail: "Placeholder — describe the work in this region.", x: 60.6, y: 49.5 },
   ],
-  /** Editable impact fields — the ministry fills verified values. */
+  /** Impact fields — years of service verified by the trust; further figures
+   *  are published here only once verified. Empty value renders as an em dash. */
   fields: [
     { id: "communities", label: "Communities reached", value: "" },
     { id: "people", label: "People served", value: "" },
     { id: "outreaches", label: "Outreaches", value: "" },
     { id: "volunteers", label: "Volunteers", value: "" },
-    { id: "years", label: "Years of service", value: "" },
+    { id: "years", label: "Years of service", value: "20+" },
   ],
 };
 
