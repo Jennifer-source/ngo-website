@@ -273,10 +273,9 @@ export const FOUNDERS: Founder[] = [
   {
     name: "PS NKM Joshus Naanapogula",
     role: "Founder",
-    story:
-      "Their story of calling — the beginnings of the ministry and what has kept it faithful — will be recorded here.",
-    vision: "A personal word of vision for the years ahead.",
-    contribution: "Leadership, vision and day-to-day shepherding.",
+    story: "",
+    vision: "",
+    contribution: "",
     image: {
       src: "/assets/founder-1.jpg",
       alt: "Portrait of PS NKM Joshus Naanapogula, Founder",
@@ -286,10 +285,9 @@ export const FOUNDERS: Founder[] = [
   {
     name: "PS. Joffynayanapogula",
     role: "Founder",
-    story:
-      "Their thread in the story — the community, the relationships, the quiet faithfulness — will be recorded here.",
-    vision: "A personal word of vision for the years ahead.",
-    contribution: "Community, care and discipleship.",
+    story: "",
+    vision: "",
+    contribution: "",
     image: {
       src: "/assets/founder-2.jpg",
       alt: "Portrait of PS. Joffynayanapogula, Founder",
@@ -299,10 +297,9 @@ export const FOUNDERS: Founder[] = [
   {
     name: "Mr. Joffy Nayanapogula",
     role: "Co-Founder",
-    story:
-      "Their part in the work and the life it serves will be recorded here.",
-    vision: "A personal word of vision for the years ahead.",
-    contribution: "Service, support and stewardship.",
+    story: "",
+    vision: "",
+    contribution: "",
     image: {
       src: "/assets/cofounder.jpg",
       alt: "Portrait of Mr. Joffy Nayanapogula, Co-Founder",

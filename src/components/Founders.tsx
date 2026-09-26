@@ -53,7 +53,7 @@ export default function Founders() {
               <img
                 src={FOUNDERS[0].image.src}
                 alt={FOUNDERS[0].image.alt}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 className="h-full w-full object-cover"
               />
@@ -119,7 +119,7 @@ function FounderChapter({
               <img
                 src={founder.image.src}
                 alt={founder.image.alt}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 className="h-full w-full object-cover"
               />
@@ -143,11 +143,16 @@ function FounderChapter({
           {founder.name}
         </h3>
 
-        <div className="mt-8 space-y-6">
-          <FounderField label="The story" text={founder.story} delay={0.05} />
-          <FounderField label="The vision" text={founder.vision} delay={0.15} />
-          <FounderField label="The contribution" text={founder.contribution} delay={0.25} />
-        </div>
+        {/* Founder fields — render only when content exists */}
+        {(founder.story || founder.vision || founder.contribution) && (
+          <div className="mt-8 space-y-6">
+            {founder.story && <FounderField label="The story" text={founder.story} delay={0.05} />}
+            {founder.vision && <FounderField label="The vision" text={founder.vision} delay={0.15} />}
+            {founder.contribution && (
+              <FounderField label="The contribution" text={founder.contribution} delay={0.25} />
+            )}
+          </div>
+        )}
       </div>
     </article>
   );
