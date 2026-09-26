@@ -37,31 +37,6 @@ export default function Founders() {
               </span>
             ))}
           </h2>
-
-          {/* Overlapping portrait — floats over the typography edge */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-12%" }}
-            transition={{ duration: 1.3, ease: EASE, delay: 0.4 }}
-            className={cn(
-              "mt-10 w-56 md:mt-0 md:w-72",
-              "md:absolute md:right-[8%] md:top-1/2 md:-translate-y-1/2",
-            )}
-          >
-            <div className="duotone aspect-[3/4] w-full shadow-2xl shadow-clay/20">
-              <img
-                src={FOUNDERS[0].image.src}
-                alt={FOUNDERS[0].image.alt}
-                loading="eager"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <p className="editorial-label mt-3 text-ink/50">
-              {FOUNDERS[0].name} — {FOUNDERS[0].role}
-            </p>
-          </motion.div>
         </div>
 
         <FadeIn delay={0.2}>
