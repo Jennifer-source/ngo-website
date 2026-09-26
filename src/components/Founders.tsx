@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Chapter 05 — The Founders.
- * Editorial portraits interleaved with oversized typography. Portraits
- * overlap the statement; each founder unfolds on their own scroll beat.
+ * Editorial portraits, each founder unfolding on their own scroll beat.
  */
 export default function Founders() {
   const reduced = useReducedMotion();
@@ -19,25 +18,6 @@ export default function Founders() {
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <SectionHeader label={FOUNDERS_INTRO.label} chapter={5} total={CHAPTER_COUNT} />
-
-        {/* Statement with an overlapping portrait */}
-        <div className="relative mt-14">
-          <h2 className="font-serif text-[clamp(2.6rem,7vw,6.5rem)] leading-[1.0] text-charcoal">
-            {FOUNDERS_INTRO.statementLines.map((line, i) => (
-              <span key={i} className="headline-crop block">
-                <motion.span
-                  className="block"
-                  initial={{ y: "110%" }}
-                  whileInView={{ y: "0%" }}
-                  viewport={{ once: true, margin: "-12%" }}
-                  transition={{ duration: 1.15, ease: EASE, delay: i * 0.14 }}
-                >
-                  {i === 2 ? <em className="text-rust">{line}</em> : line}
-                </motion.span>
-              </span>
-            ))}
-          </h2>
-        </div>
 
         {/* Founder chapters */}
         <div className="mt-24 space-y-28 md:space-y-40">
