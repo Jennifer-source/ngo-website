@@ -1,0 +1,17 @@
+{
+  "name": "Hands of Grace International Ministries Trust",
+  "short_name": "Hands of Grace",
+  "description": "Serving communities. Restoring dignity. Carrying hope forward.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14100C",
+  "theme_color": "#FB8C00",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
