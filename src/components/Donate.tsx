@@ -10,7 +10,7 @@ type Frequency = "one-time" | "monthly";
 type Status = "idle" | "sending" | "success" | "error";
 
 /**
- * Chapter 11 — Donate.
+ * Chapter 10 — Donate.
  * Trust-first giving: clear amounts, encrypted hosted checkout, and a
  * personal follow-up path when online payment is not yet configured.
  * No invented impact claims, no invented bank details.
@@ -148,7 +148,7 @@ export default function Donate() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-5">
-            <SectionHeader label={DONATE.label} chapter={11} total={CHAPTER_COUNT} />
+            <SectionHeader label={DONATE.label} chapter={10} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={DONATE.statementLines}

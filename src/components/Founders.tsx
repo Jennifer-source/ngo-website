@@ -4,7 +4,7 @@ import { EASE, SectionHeader, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
 /**
- * Chapter 06 — The Founders.
+ * Chapter 05 — The Founders.
  * Editorial portraits interleaved with oversized typography. Portraits
  * overlap the statement; each founder unfolds on their own scroll beat.
  */
@@ -18,7 +18,7 @@ export default function Founders() {
       className="relative bg-mist py-28 md:py-40"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <SectionHeader label={FOUNDERS_INTRO.label} chapter={6} total={CHAPTER_COUNT} />
+        <SectionHeader label={FOUNDERS_INTRO.label} chapter={5} total={CHAPTER_COUNT} />
 
         {/* Statement with an overlapping portrait */}
         <div className="relative mt-14">

@@ -6,7 +6,7 @@ import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
 /**
- * Chapter 08 — Impact in action.
+ * Chapter 07 — Impact in action.
  * Individual human stories told with dignity: a person, a moment, a need,
  * a response, a change. No suffering as spectacle — only humanity.
  */
@@ -20,7 +20,7 @@ export default function ImpactStories() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 lg:col-span-7">
-            <SectionHeader label={IMPACT_STORIES_INTRO.label} chapter={8} total={CHAPTER_COUNT} />
+            <SectionHeader label={IMPACT_STORIES_INTRO.label} chapter={7} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={IMPACT_STORIES_INTRO.statementLines}

@@ -23,7 +23,7 @@ export const NAV_LINKS = [
   { label: "Talk To Us", href: "#talk-to-us" },
 ] as const;
 
-export const CHAPTER_COUNT = 13;
+export const CHAPTER_COUNT = 12;
 
 /* ------------------------------------------------------------------ */
 /* Hero — image supplied by the ministry (placeholder until provided)  */
@@ -605,7 +605,7 @@ export const DONATE = {
 /* ------------------------------------------------------------------ */
 
 export const CLIMAX = {
-  label: "Chapter twelve",
+  label: "Chapter eleven",
   titleLines: ["The story", "isn't over."],
   subLines: ["Be a part of", "what comes next."],
   primaryCta: { label: "Join the journey", href: "#talk-to-us" },

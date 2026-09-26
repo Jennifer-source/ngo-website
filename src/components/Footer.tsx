@@ -4,7 +4,7 @@ import { FOOTER, NAV_LINKS, SOCIAL_HANDLES, CONTACT } from "@/content/site";
 import { EASE } from "./motion/Primitives";
 
 /**
- * Chapter 13 — Footer.
+ * Chapter 12 — Footer.
  * A quiet, spacious close to the journey. Local time ticks softly —
  * the story continues beyond the website.
  */

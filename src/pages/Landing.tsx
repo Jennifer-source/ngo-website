@@ -1,7 +1,6 @@
 import { ScrollProgress, ChapterCursor } from "@/components/motion/Primitives";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import Journey from "@/components/Journey";
 import ImpactMap from "@/components/ImpactMap";
 import JourneyFilm from "@/components/JourneyFilm";
 import SocialHandles from "@/components/SocialHandles";
@@ -15,8 +14,8 @@ import StoryClimax from "@/components/StoryClimax";
 import Footer from "@/components/Footer";
 
 /**
- * HANDS OF GRACE — one continuous cinematic experience in 13 chapters.
- * The chapters flow: HERO → JOURNEY → IMPACT → FILM → SOCIAL → FOUNDERS
+ * HANDS OF GRACE — one continuous cinematic experience in 12 chapters.
+ * The chapters flow: HERO → IMPACT → FILM → SOCIAL → FOUNDERS
  * → SERVE → IMPACT IN ACTION → FRAGMENTS → TALK TO US → DONATE → CLIMAX
  * → FOOTER.
  */
@@ -31,41 +30,42 @@ export default function Landing() {
         {/* 01 — Hero */}
         <Hero />
 
-        {/* 02 — Our Journey */}
-        <Journey />
+        {/* #journey — anchor kept for the nav's Journey link; the old
+            "Our Journey" chapter was removed. Zero-height, no empty section. */}
+        <span id="journey" aria-hidden className="absolute" />
 
-        {/* 03 — Global Impact */}
+        {/* 02 — Global Impact */}
         <ImpactMap />
 
-        {/* 04 — Our Journey Film */}
+        {/* 03 — Our Journey Film */}
         <JourneyFilm />
 
-        {/* 05 — Social handles */}
+        {/* 04 — Social handles */}
         <SocialHandles />
 
-        {/* 06 — The Founders */}
+        {/* 05 — The Founders */}
         <Founders />
 
-        {/* 07 — Serve */}
+        {/* 06 — Serve */}
         <Serve />
 
-        {/* 08 — Impact in action */}
+        {/* 07 — Impact in action */}
         <ImpactStories />
 
-        {/* 09 — Fragments */}
+        {/* 08 — Fragments */}
         <Fragments />
 
-        {/* 10 — Talk to us */}
+        {/* 09 — Talk to us */}
         <TalkToUs />
 
-        {/* 11 — Donate */}
+        {/* 10 — Donate */}
         <Donate />
 
-        {/* 12 — The story isn't over */}
+        {/* 11 — The story isn't over */}
         <StoryClimax />
       </main>
 
-      {/* 13 — Footer */}
+      {/* 12 — Footer */}
       <Footer />
     </div>
   );

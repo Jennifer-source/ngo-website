@@ -4,7 +4,7 @@ import { CLIMAX, CHAPTER_COUNT } from "@/content/site";
 import { EASE, FilmGrain, MagneticButton } from "./motion/Primitives";
 
 /**
- * Chapter 12 — The story isn't over.
+ * Chapter 11 — The story isn't over.
  * The emotional climax: near-black, slow reveals, an invitation rather
  * than a sales pitch.
  */

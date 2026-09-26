@@ -4,7 +4,7 @@ import { FILM, CHAPTER_COUNT } from "@/content/site";
 import { EASE, FilmGrain, SectionHeader } from "./motion/Primitives";
 
 /**
- * Chapter 04 — Our Journey Film.
+ * Chapter 03 — Our Journey Film.
  * Cinematic full-width section: the poster breathes with scroll; the play
  * control expands the stage into an immersive viewing mode.
  */
@@ -29,7 +29,7 @@ export default function JourneyFilm() {
       <FilmGrain opacity={0.22} />
 
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 md:px-12">
-        <SectionHeader label={FILM.label} chapter={4} total={CHAPTER_COUNT} light />
+        <SectionHeader label={FILM.label} chapter={3} total={CHAPTER_COUNT} light />
 
         <h2 className="mt-12 font-serif leading-[0.98]">
           <span className="block text-[clamp(2.6rem,7vw,6.5rem)] text-ivory">

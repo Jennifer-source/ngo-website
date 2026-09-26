@@ -3,7 +3,7 @@ import { SOCIAL, SOCIAL_HANDLES, CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, FadeIn } from "./motion/Primitives";
 
 /**
- * Chapter 05 — Social handles.
+ * Chapter 04 — Social handles.
  * Kinetic typography + horizontally drifting channels. Honest state: a
  * channel without a real URL is presented as "opening soon", never a
  * dead link.
@@ -20,7 +20,7 @@ export default function SocialHandles() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <div>
-            <SectionHeader label={SOCIAL.label} chapter={5} total={CHAPTER_COUNT} />
+            <SectionHeader label={SOCIAL.label} chapter={4} total={CHAPTER_COUNT} />
             <FadeIn>
               <p className="mt-8 max-w-md text-[0.95rem] leading-relaxed text-smoke">
                 {SOCIAL.intro}

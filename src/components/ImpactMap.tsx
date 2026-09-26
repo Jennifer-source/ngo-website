@@ -5,7 +5,7 @@ import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
 /**
- * Chapter 03 — Impact.
+ * Chapter 02 — Impact.
  * A quiet cartographic system: illuminated regions pulse on a minimal
  * world map. No invented statistics — only editable, verified-to-come fields.
  */
@@ -22,7 +22,7 @@ export default function ImpactMap() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-5">
-            <SectionHeader label={IMPACT.label} chapter={3} total={CHAPTER_COUNT} />
+            <SectionHeader label={IMPACT.label} chapter={2} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={IMPACT.statementLines}

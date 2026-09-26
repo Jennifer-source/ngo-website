@@ -5,7 +5,7 @@ import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./mot
 import { cn } from "@/lib/utils";
 
 /**
- * Chapter 07 — Serve.
+ * Chapter 06 — Serve.
  * A spatial composition: pathways orbit a shared stage on desktop and
  * reflow to a touch-friendly grid on mobile. Selecting a pathway
  * transforms the stage.
@@ -24,7 +24,7 @@ export default function Serve() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-4">
-            <SectionHeader label={SERVE.label} chapter={7} total={CHAPTER_COUNT} />
+            <SectionHeader label={SERVE.label} chapter={6} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={SERVE.statementLines}

@@ -10,7 +10,7 @@ type PathwayId = "general" | "volunteer" | "partnership" | "prayer" | "media";
 type Status = "idle" | "sending" | "success" | "error";
 
 /**
- * Chapter 10 — Talk to us.
+ * Chapter 09 — Talk to us.
  * A warm, production-quality conversation form: clear fields, focus
  * states, validation, error states and a success animation. Submissions
  * persist to Convex.
@@ -72,7 +72,7 @@ export default function TalkToUs() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 lg:col-span-5">
-            <SectionHeader label={TALK_TO_US.label} chapter={10} total={CHAPTER_COUNT} />
+            <SectionHeader label={TALK_TO_US.label} chapter={9} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={TALK_TO_US.statementLines}

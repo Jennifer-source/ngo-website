@@ -4,7 +4,7 @@ import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
 /**
- * Chapter 09 — Fragments.
+ * Chapter 08 — Fragments.
  * An asymmetric documentary archive: different scales, offsets and
  * rhythms. Captions read like field notes.
  */
@@ -18,7 +18,7 @@ export default function Fragments() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <div>
-            <SectionHeader label={FRAGMENTS.label} chapter={9} total={CHAPTER_COUNT} />
+            <SectionHeader label={FRAGMENTS.label} chapter={8} total={CHAPTER_COUNT} />
             <AnimatedText
               as="h2"
               lines={FRAGMENTS.statementLines}
