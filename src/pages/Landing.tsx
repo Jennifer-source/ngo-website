@@ -6,7 +6,6 @@ import JourneyFilm from "@/components/JourneyFilm";
 import SocialHandles from "@/components/SocialHandles";
 import Founders from "@/components/Founders";
 import Serve from "@/components/Serve";
-import ImpactStories from "@/components/ImpactStories";
 import Fragments from "@/components/Fragments";
 import TalkToUs from "@/components/TalkToUs";
 import Donate from "@/components/Donate";
@@ -14,10 +13,9 @@ import StoryClimax from "@/components/StoryClimax";
 import Footer from "@/components/Footer";
 
 /**
- * HANDS OF GRACE — one continuous cinematic experience in 12 chapters.
+ * HANDS OF GRACE — one continuous cinematic experience in 11 chapters.
  * The chapters flow: HERO → IMPACT → FILM → SOCIAL → FOUNDERS
- * → SERVE → IMPACT IN ACTION → FRAGMENTS → TALK TO US → DONATE → CLIMAX
- * → FOOTER.
+ * → SERVE → FRAGMENTS → TALK TO US → DONATE → CLIMAX → FOOTER.
  */
 export default function Landing() {
   return (
@@ -49,23 +47,20 @@ export default function Landing() {
         {/* 06 — Serve */}
         <Serve />
 
-        {/* 07 — Impact in action */}
-        <ImpactStories />
-
-        {/* 08 — Fragments */}
+        {/* 07 — Fragments */}
         <Fragments />
 
-        {/* 09 — Talk to us */}
+        {/* 08 — Talk to us */}
         <TalkToUs />
 
-        {/* 10 — Donate */}
+        {/* 09 — Donate */}
         <Donate />
 
-        {/* 11 — The story isn't over */}
+        {/* 10 — The story isn't over */}
         <StoryClimax />
       </main>
 
-      {/* 12 — Footer */}
+      {/* 11 — Footer */}
       <Footer />
     </div>
   );
