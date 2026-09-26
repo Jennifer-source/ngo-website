@@ -149,10 +149,7 @@ export default function Navigation() {
                 go("#donate");
               }}
               className={cn(
-                "hidden border px-5 py-2.5 text-[0.72rem] font-medium uppercase tracking-[0.22em] transition-all duration-500 lg:inline-block",
-                light
-                  ? "border-sunlight/60 text-sunlight hover:bg-sunlight hover:text-ink"
-                  : "border-rust/50 text-rust hover:bg-rust hover:text-ivory",
+                "hidden border border-white bg-transparent px-5 py-2.5 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-white transition-all duration-500 hover:bg-white hover:text-ink lg:inline-block",
               )}
             >
               Donate

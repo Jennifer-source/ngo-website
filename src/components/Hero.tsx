@@ -5,7 +5,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "framer-motion";
-import { HERO, CHAPTER_COUNT } from "@/content/site";
+import { HERO } from "@/content/site";
 import { EASE, FilmGrain } from "./motion/Primitives";
 
 export default function Hero() {
@@ -83,55 +83,10 @@ export default function Hero() {
             {HERO.subline}
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.45 }}
-            className="mt-10 flex flex-wrap items-center gap-4"
-          >
-            <a
-              href="#journey"
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector("#journey")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="group inline-flex items-center gap-3 bg-sun px-7 py-4 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-ink transition-colors duration-500 hover:bg-sunlight"
-            >
-              Explore our journey
-              <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1.5">→</span>
-            </a>
-            <a
-              href="#talk-to-us"
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector("#talk-to-us")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="group inline-flex items-center gap-3 border border-mist/35 px-7 py-4 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-mist transition-all duration-500 hover:border-sunlight hover:text-sunlight"
-            >
-              Be part of the journey
-              <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1.5">→</span>
-            </a>
-          </motion.div>
+
         </div>
 
-        {/* Scroll cue + chapter index */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 2 }}
-          className="absolute inset-x-6 bottom-6 flex items-center justify-between md:inset-x-12"
-        >
-          <p className="editorial-label flex items-center gap-3 text-mist/60">
-            <motion.span
-              aria-hidden
-              animate={reduced ? undefined : { scaleY: [1, 0.4, 1], opacity: [0.9, 0.3, 0.9] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-              className="block h-8 w-px origin-top bg-apricot/80"
-            />
-            {HERO.scrollLabel}
-          </p>
-          <p className="editorial-label tabular-nums text-mist/60">01 / {String(CHAPTER_COUNT).padStart(2, "0")}</p>
-        </motion.div>
+
       </motion.div>
     </section>
   );
