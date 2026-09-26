@@ -84,7 +84,13 @@ export default function SocialHandles() {
             return (
               <li key={`${s.id}-${i}`}>
                 {s.href ? (
-                  <a href={s.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s.platform}: ${s.handle} — ${s.action} (opens in a new tab)`}
+                    className={cls}
+                  >
                     {inner}
                   </a>
                 ) : (
