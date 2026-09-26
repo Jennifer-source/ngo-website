@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { FOUNDERS, FOUNDERS_INTRO, CHAPTER_COUNT } from "@/content/site";
-import { EASE, SectionHeader, FadeIn } from "./motion/Primitives";
+import { EASE, SectionHeader } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 
 /**
@@ -38,12 +38,6 @@ export default function Founders() {
             ))}
           </h2>
         </div>
-
-        <FadeIn delay={0.2}>
-          <p className="mt-10 max-w-md text-[0.95rem] leading-relaxed text-smoke">
-            {FOUNDERS_INTRO.intro}
-          </p>
-        </FadeIn>
 
         {/* Founder chapters */}
         <div className="mt-24 space-y-28 md:space-y-40">
