@@ -17,6 +17,14 @@ export default function Serve() {
   const [activeId, setActiveId] = useState<string>("volunteer");
   const active = pathways.find((p) => p.id === activeId) ?? pathways[0];
 
+  /** Same-tick handoff so the Talk to us form opens with this pathway pre-selected. */
+  const announcePathway = () => {
+    if (!active) return;
+    window.dispatchEvent(
+      new CustomEvent("hog:talk-pathway", { detail: { pathway: active.id } }),
+    );
+  };
+
   return (
     <section
       id="serve"
@@ -47,6 +55,7 @@ export default function Serve() {
               reduced={!!reduced}
               active={active}
               pathways={pathways}
+              onPathwayClick={announcePathway}
             />
           </div>
         </div>
@@ -61,12 +70,14 @@ function ServeOrbit({
   reduced,
   active,
   pathways,
+  onPathwayClick,
 }: {
   activeId: string;
   onSelect: (id: string) => void;
   reduced: boolean;
   active: ReturnType<typeof useServeContent>["pathways"][number];
   pathways: ReturnType<typeof useServeContent>["pathways"];
+  onPathwayClick: () => void;
 }) {
   return (
     <div className="lg:flex lg:items-center lg:gap-10">
@@ -105,7 +116,12 @@ function ServeOrbit({
                 ))}
               </div>
               <div className="mt-6">
-                <MagneticButton href={active.href} variant="ghost" className="px-0 py-0">
+                <MagneticButton
+                  href={active.href}
+                  onClick={onPathwayClick}
+                  variant="ghost"
+                  className="px-0 py-0"
+                >
                   {active.cta}
                 </MagneticButton>
               </div>
@@ -113,8 +129,10 @@ function ServeOrbit({
           </AnimatePresence>
         </div>
 
-        {/* Pathway nodes on the orbit */}
-        <ul aria-label="Serve pathways" className="absolute inset-0">
+        {/* Pathway nodes on the orbit. The list overlays the whole orbit
+            stage, so it must be click-transparent — otherwise it swallows
+            clicks meant for the center-stage CTA. Node buttons opt back in. */}
+        <ul aria-label="Serve pathways" className="pointer-events-none absolute inset-0">
           {pathways.map((p, i) => {
             const angle = (i / pathways.length) * 2 * Math.PI - Math.PI / 2;
             const px = 50 + Math.cos(angle) * 50;
@@ -131,7 +149,7 @@ function ServeOrbit({
                   onClick={() => onSelect(p.id)}
                   aria-pressed={isActive}
                   className={cn(
-                    "group flex flex-col items-center gap-1.5 whitespace-nowrap px-1 transition-colors duration-500",
+                    "group pointer-events-auto flex flex-col items-center gap-1.5 whitespace-nowrap px-1 transition-colors duration-500",
                     isActive ? "text-clay" : "text-ink/55 hover:text-rust",
                   )}
                 >
@@ -175,7 +193,12 @@ function ServeOrbit({
                 ))}
               </div>
               <div className="mt-5">
-                <MagneticButton href={active.href} variant="ghost" className="px-0 py-0">
+                <MagneticButton
+                  href={active.href}
+                  onClick={onPathwayClick}
+                  variant="ghost"
+                  className="px-0 py-0"
+                >
                   {active.cta}
                 </MagneticButton>
               </div>

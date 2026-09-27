@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useLayoutEffect, useState, type FormEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -11,6 +11,9 @@ import { useAuth } from "@/hooks/use-auth";
 
 type PathwayId = "general" | "volunteer" | "partnership" | "prayer" | "media";
 type Status = "idle" | "sending" | "success" | "error";
+
+/** Same ids as the form chips; guards the custom-event pre-select. */
+const PATHWAY_IDS: PathwayId[] = ["general", "volunteer", "partnership", "prayer", "media"];
 
 /**
  * Chapter 08 — Talk to us.
@@ -31,6 +34,20 @@ export default function TalkToUs() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
+
+  // Pre-select the pathway when arriving from a Serve CTA (e.g. "Become a
+  // volunteer"). Registered before first paint so a same-tick click's
+  // dispatch is never missed.
+  useLayoutEffect(() => {
+    const preselect = (e: Event) => {
+      const detail = (e as CustomEvent<{ pathway?: string }>).detail;
+      if (detail?.pathway && PATHWAY_IDS.includes(detail.pathway as PathwayId)) {
+        setPathway(detail.pathway as PathwayId);
+      }
+    };
+    window.addEventListener("hog:talk-pathway", preselect);
+    return () => window.removeEventListener("hog:talk-pathway", preselect);
+  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};

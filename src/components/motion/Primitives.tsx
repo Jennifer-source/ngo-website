@@ -305,6 +305,9 @@ export function MagneticButton({
         onMouseMove={handleMove}
         onMouseLeave={reset}
         onClick={(e) => {
+          // Optional extra behavior (e.g. pre-filling a form pathway) runs
+          // before the hash scroll; the scroll itself is unchanged.
+          onClick?.();
           if (isHash) {
             e.preventDefault();
             document
