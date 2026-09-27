@@ -1,16 +1,29 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useFragmentsContent } from "@/hooks/use-site-content";
 import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
+import FragmentGallery from "./FragmentGallery";
 
 /**
  * Chapter 07 — Fragments.
- * An asymmetric documentary archive: different scales, offsets and
- * rhythms. Captions read like field notes.
+ * An asymmetric documentary archive. Every card is a real control:
+ * VIEW opens a fullscreen horizontal photo journey built from the same
+ * archive data — nothing invented.
  */
 export default function Fragments() {
   const fragments = useFragmentsContent();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  /** Closing "The story continues →" hands off to the Impact chapter. */
+  const exploreImpact = () => {
+    setOpenIndex(null);
+    document
+      .querySelector("#impact")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section
       id="fragments"
@@ -37,10 +50,21 @@ export default function Fragments() {
         {/* Asymmetric editorial grid */}
         <div className="mt-20 grid grid-cols-12 gap-4 md:gap-6">
           {fragments.items.map((f, i) => (
-            <FragmentCard key={f.id} fragment={f} index={i} />
+            <FragmentCard key={f.id} fragment={f} index={i} onOpen={setOpenIndex} />
           ))}
         </div>
       </div>
+
+      <AnimatePresence>
+        {openIndex !== null && (
+          <FragmentGallery
+            items={fragments.items}
+            startIndex={openIndex}
+            onClose={() => setOpenIndex(null)}
+            onExplore={exploreImpact}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -48,9 +72,11 @@ export default function Fragments() {
 function FragmentCard({
   fragment,
   index,
+  onOpen,
 }: {
   fragment: ReturnType<typeof useFragmentsContent>["items"][number];
   index: number;
+  onOpen: (i: number) => void;
 }) {
   /* Editorial spans — each fragment earns its own shape */
   const spanMap: Record<string, string> = {
@@ -68,10 +94,21 @@ function FragmentCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-8%" }}
       transition={{ duration: 1, ease: EASE, delay: (index % 3) * 0.1 }}
-      className={cn("group", span, offset)}
+      className={cn("group relative", span, offset)}
       data-cursor="VIEW"
     >
-      <div className="relative h-full w-full overflow-hidden bg-sand/40">
+      {/* The real VIEW control — covers the full card, sits beneath the
+          caption for a text-accurate a11y tree, above the artwork. */}
+      <button
+        type="button"
+        onClick={() => onOpen(index)}
+        aria-label={`Open gallery at ${fragment.caption}${fragment.detail ? ` — ${fragment.detail}` : ""}`}
+        className="absolute inset-0 z-20 h-full w-full cursor-pointer rounded-none outline-none focus-visible:ring-1 focus-visible:ring-rust"
+        data-cursor="VIEW"
+      />
+
+      {/* Visible card artwork + caption — beneath the button layer */}
+      <div className="relative z-0 h-full w-full overflow-hidden bg-sand/40">
         <div className="duotone h-full w-full transition-transform duration-[1600ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]">
           <img
             src={fragment.image.src}
