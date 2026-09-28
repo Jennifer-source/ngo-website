@@ -83,11 +83,7 @@ export default function Hero() {
           >
             {hero.subline}
           </motion.p>
-
-
         </div>
-
-
       </motion.div>
     </section>
   );
