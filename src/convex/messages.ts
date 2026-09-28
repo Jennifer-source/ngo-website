@@ -11,12 +11,12 @@ import {
 } from "./lib";
 
 /**
- * Messages — talk-to-us submissions (general / partnership / prayer / media /
+ * Messages — talk-to-us submissions (general / partnership / prayer /
  * volunteer mirror). Every message is owned by a signed-in user; users can
  * read only their own. Admins manage status, notes and responses.
  */
 
-const MESSAGE_TYPES = ["general", "volunteer", "partnership", "prayer", "media"] as const;
+const MESSAGE_TYPES = ["general", "volunteer", "partnership", "prayer"] as const;
 const MESSAGE_STATUSES = ["new", "read", "in_progress", "responded", "closed"] as const;
 
 /** Authenticated user: submit a message. */

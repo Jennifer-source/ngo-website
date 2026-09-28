@@ -102,7 +102,7 @@ const schema = defineSchema({
 
   /* ---------------- User-owned records ---------------------------------- */
 
-  /** Talk-to-us messages: general / partnership / prayer / media (+volunteer mirror). */
+  /** Talk-to-us messages: general / partnership / prayer (+volunteer mirror). */
   messages: defineTable({
     userId: v.id("users"),
     name: v.string(),
@@ -113,7 +113,6 @@ const schema = defineSchema({
       v.literal("volunteer"),
       v.literal("partnership"),
       v.literal("prayer"),
-      v.literal("media"),
     ),
     message: v.string(),
     status: v.string(), // new | read | in_progress | responded | closed

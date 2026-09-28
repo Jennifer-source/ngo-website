@@ -600,7 +600,6 @@ export const TALK_TO_US = {
     { id: "volunteer", label: "Volunteer" },
     { id: "partnership", label: "Partnership" },
     { id: "prayer", label: "Prayer" },
-    { id: "media", label: "Media" },
   ],
   cta: "Start a conversation",
 };

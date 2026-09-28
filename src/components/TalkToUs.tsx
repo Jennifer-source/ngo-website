@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/use-auth";
 
-type PathwayId = "general" | "volunteer" | "partnership" | "prayer" | "media";
+type PathwayId = "general" | "volunteer" | "partnership" | "prayer";
 type Status = "idle" | "sending" | "success" | "error";
 
 /** Same ids as the form chips; guards the custom-event pre-select. */
-const PATHWAY_IDS: PathwayId[] = ["general", "volunteer", "partnership", "prayer", "media"];
+const PATHWAY_IDS: PathwayId[] = ["general", "volunteer", "partnership", "prayer"];
 
 /**
  * Chapter 08 — Talk to us.
@@ -198,22 +198,24 @@ export default function TalkToUs() {
                       What is this about?
                     </legend>
                     <div className="flex flex-wrap gap-2">
-                      {talk.pathways.map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          aria-pressed={pathway === p.id}
-                          onClick={() => setPathway(p.id as PathwayId)}
-                          className={cn(
-                            "border px-4 py-2.5 text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-all duration-500",
-                            pathway === p.id
-                              ? "border-clay bg-clay text-ivory"
-                              : "border-ink/15 text-ink/60 hover:border-rust/50 hover:text-rust",
-                          )}
-                        >
-                          {p.label}
-                        </button>
-                      ))}
+                      {talk.pathways
+                        .filter((p) => PATHWAY_IDS.includes(p.id as PathwayId))
+                        .map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            aria-pressed={pathway === p.id}
+                            onClick={() => setPathway(p.id as PathwayId)}
+                            className={cn(
+                              "border px-4 py-2.5 text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-all duration-500",
+                              pathway === p.id
+                                ? "border-clay bg-clay text-ivory"
+                                : "border-ink/15 text-ink/60 hover:border-rust/50 hover:text-rust",
+                            )}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
                     </div>
                   </fieldset>
 
