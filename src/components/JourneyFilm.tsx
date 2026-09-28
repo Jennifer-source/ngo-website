@@ -68,6 +68,7 @@ export default function JourneyFilm() {
                 controls
                 playsInline
                 preload="metadata"
+                onEnded={() => setPlaying(false)}
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
@@ -97,7 +98,7 @@ export default function JourneyFilm() {
                   whileHover={{ scale: 1.06 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ duration: 0.5, ease: EASE }}
-                  className="relative flex h-24 w-24 items-center justify-center rounded-full border border-mist/40 backdrop-blur-sm transition-colors duration-500 group-hover:border-sunlight"
+                  className="relative flex h-24 w-24 items-center justify-center rounded-full border border-mist/40 bg-ink/30 backdrop-blur-sm transition-colors duration-500 group-hover:border-sunlight"
                 >
                   <span className="absolute inset-0 rounded-full bg-sunlight/0 transition-colors duration-500 group-hover:bg-sunlight/10" />
                   <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden className="ml-1 fill-mist transition-colors duration-500 group-hover:fill-sunlight">
