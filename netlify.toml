@@ -1,0 +1,11 @@
+[build]
+  command = "bash -c '[ -f src/convex/_generated/api.d.ts ] || (test -n \"$CONVEX_DEPLOY_KEY\" && bunx convex codegen --typecheck disable); bun run build'"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
