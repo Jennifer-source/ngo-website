@@ -620,18 +620,18 @@ export const PARTNERSHIP = {
 /* Donate — trust-first. No payment processor configured in v1.        */
 /* ------------------------------------------------------------------ */
 
+/**
+ * The single fixed donation amount (INR) used while the amount picker is
+ * removed from the Donate UI. The backend mirrors this value as DONATE_AMOUNT
+ * in src/convex/lib.ts — keep the two in sync if it ever changes.
+ */
+export const DONATE_AMOUNT = 1000;
+
 export const DONATE = {
   label: "Donate",
   statementLines: ["Your generosity", "becomes someone's", "next step."],
   intro:
     "Give once, or commit to the work month by month. Every contribution is stewarded with care, recorded by the trust, and acknowledged with a receipt.",
-  frequencies: [
-    { id: "one-time", label: "One time" },
-    { id: "monthly", label: "Monthly" },
-  ],
-  /** Editable preset amounts (INR). Adjust in this file only. */
-  amounts: [500, 1000, 2500, 5000],
-  customRange: { min: 100, max: 500000 },
   secureNote:
     "Payments are processed over an encrypted connection by an accredited payment provider, and no card details are stored on this website. Receipts are issued for every contribution.",
   /** Official payment details — left empty until the ministry provides them. */

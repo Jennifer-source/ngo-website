@@ -1,15 +1,13 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { motion } from "framer-motion";
 import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useDonateContent, useContactContent } from "@/hooks/use-site-content";
-import { DONATE, CHAPTER_COUNT } from "@/content/site";
-import { EASE, SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
+import { CHAPTER_COUNT, DONATE_AMOUNT } from "@/content/site";
+import { SectionHeader, AnimatedText, FadeIn, MagneticButton } from "./motion/Primitives";
 import { cn } from "@/lib/utils";
 import AuthModal from "./AuthModal";
 import { useAuth } from "@/hooks/use-auth";
 
-type Frequency = "one-time" | "monthly";
 type Status = "idle" | "sending" | "error";
 
 /**
@@ -27,16 +25,15 @@ export default function Donate() {
   const getCheckoutUrl = useMutation(api.donations.getSandboxCheckoutUrl);
   const { isLoading: authLoading, isAuthenticated } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
-  const [frequency, setFrequency] = useState<Frequency>("one-time");
-  const [amount, setAmount] = useState<number>(DONATE.amounts[1]);
-  const [custom, setCustom] = useState("");
-  const [isCustom, setIsCustom] = useState(false);
   const [values, setValues] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
 
-  const finalAmount = isCustom ? Number(custom || 0) : amount;
+  /* Amount UI was removed; this single backend-tracked amount feeds checkout.
+     See DONATE_AMOUNT in src/content/site.ts — change it there, not here. */
+  const amount = DONATE_AMOUNT;
+  const frequency = "one-time" as const;
 
   const formatInr = useMemo(
     () => (n: number) =>
@@ -50,14 +47,6 @@ export default function Donate() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!isCustom && !donate.amounts.includes(amount)) e.amount = "Please choose an amount.";
-    if (isCustom) {
-      const n = Number(custom);
-      if (!custom || Number.isNaN(n) || n < donate.customRange.min)
-        e.amount = `Please enter at least ${formatInr(donate.customRange.min)}.`;
-      if (n > donate.customRange.max)
-        e.amount = "For gifts above the maximum, please contact us directly.";
-    }
     if (values.name.trim().length < 2) e.name = "Please share your name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))
       e.email = "Please enter a valid email address.";
@@ -75,7 +64,7 @@ export default function Donate() {
         donorEmail: values.email.trim(),
         phone: values.phone.trim() || undefined,
         frequency,
-        amountInr: finalAmount,
+        amountInr: amount,
         message: values.message.trim() || undefined,
       });
       const { url } = await getCheckoutUrl({ donationId: created.id });
@@ -188,103 +177,8 @@ export default function Donate() {
           <div className="col-span-12 lg:col-span-6 lg:col-start-7">
             <div className="border border-ink/10 bg-ivory p-7 md:p-10">
               <form onSubmit={onSubmit} noValidate>
-                {/* Frequency */}
-                <div role="radiogroup" aria-label="Donation frequency" className="grid grid-cols-2 gap-1 border border-ink/10 p-1">
-                  {donate.frequencies.map((f) => (
-                    <button
-                      key={f.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={frequency === f.id}
-                      onClick={() => setFrequency(f.id as Frequency)}
-                      className={cn(
-                        "py-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] transition-all duration-500",
-                        frequency === f.id
-                          ? "bg-clay text-ivory"
-                          : "text-ink/55 hover:text-rust",
-                      )}
-                    >
-                      {f.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Amounts */}
-                <div className="mt-8">
-                  <p className="editorial-label mb-4 text-smoke">Choose an amount</p>
-                  <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
-                    {donate.amounts.map((a) => (
-                      <button
-                        key={a}
-                        type="button"
-                        aria-pressed={!isCustom && amount === a}
-                        onClick={() => {
-                          setAmount(a);
-                          setIsCustom(false);
-                          setCustom("");
-                        }}
-                        className={cn(
-                          "border py-3.5 font-serif text-lg transition-all duration-500",
-                          !isCustom && amount === a
-                            ? "border-rust bg-rust text-ivory"
-                            : "border-ink/15 text-charcoal hover:border-rust/50",
-                        )}
-                      >
-                        {formatInr(a)}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      aria-pressed={isCustom}
-                      onClick={() => setIsCustom(true)}
-                      className={cn(
-                        "border py-3.5 text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-all duration-500",
-                        isCustom
-                          ? "border-rust bg-rust text-ivory"
-                          : "border-ink/15 text-charcoal/70 hover:border-rust/50",
-                      )}
-                    >
-                      Custom
-                    </button>
-                  </div>
-
-                  {isCustom && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      transition={{ duration: 0.5, ease: EASE }}
-                      className="overflow-hidden"
-                    >
-                      <label htmlFor="don-custom" className="editorial-label mt-5 mb-1 block text-smoke">
-                        Your amount (₹)
-                      </label>
-                      <input
-                        id="don-custom"
-                        type="number"
-                        inputMode="numeric"
-                        min={donate.customRange.min}
-                        max={donate.customRange.max}
-                        value={custom}
-                        onChange={(e) => setCustom(e.target.value)}
-                        className={inputCls(errors.amount)}
-                        placeholder={String(donate.customRange.min)}
-                      />
-                    </motion.div>
-                  )}
-                  {errors.amount && !isCustom && (
-                    <p role="alert" className="mt-2 text-[0.78rem] text-destructive">
-                      {errors.amount}
-                    </p>
-                  )}
-                  {!isCustom && !errors.amount && finalAmount > 0 && (
-                    <p className="editorial-label mt-4 text-[0.62rem] text-smoke/70">
-                      Giving {formatInr(finalAmount)} {frequency === "monthly" ? "every month" : "once"}
-                    </p>
-                  )}
-                </div>
-
                 {/* Donor details */}
-                <div className="mt-9 grid grid-cols-1 gap-7 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
                   <Field label="Your name" error={errors.name} htmlFor="don-name">
                     <input
                       id="don-name"
@@ -349,9 +243,7 @@ export default function Donate() {
 
                 <div className="mt-9">
                   <MagneticButton type="submit" disabled={status === "sending"} className="w-full justify-center sm:w-auto">
-                    {status === "sending"
-                      ? "Recording…"
-                      : `Give ${finalAmount > 0 ? formatInr(finalAmount) : ""} ${frequency === "monthly" ? "monthly" : "now"}`}
+                    {status === "sending" ? "Recording…" : `Give ${formatInr(amount)} now`}
                   </MagneticButton>
                   <p className="editorial-label mt-4 text-[0.6rem] text-smoke/70">
                     Payments are processed over an encrypted connection · No card

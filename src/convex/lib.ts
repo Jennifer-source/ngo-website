@@ -133,6 +133,14 @@ export function validateOptionalPhone(value: string | undefined): string | undef
   return v;
 }
 
+/**
+ * The single fixed donation amount (INR) used while the amount picker is
+ * removed from the Donate UI. The frontend sources the same constant as
+ * DONATE_AMOUNT from src/content/site.ts. Suggested amounts can be re-added
+ * later; then this value feeds the presets and the checkout flows below.
+ */
+export const DONATE_AMOUNT = 1000;
+
 /** Donation amount: integer rupees inside [min, max]. */
 export function validateDonationAmount(
   amountInr: number,
