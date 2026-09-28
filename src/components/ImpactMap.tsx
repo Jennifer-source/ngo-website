@@ -11,17 +11,13 @@ import { cn } from "@/lib/utils";
  */
 
 /*
- * Editorial world map — single viewBox 0 0 1000 500, equirectangular.
- * Contintent silhouettes are hand-tuned (recognisable, intentionally
- * simplified); India is its own path so it can carry the terracotta fill.
- * No external map service, no extra dependency.
+ * Editorial world map — equirectangular, hand-tuned silhouettes
+ * (recognisable, intentionally simplified). India is its own path so it can
+ * carry the terracotta fill. No external map service, no extra dependency.
  */
 
-const LAND = "bg-sand"; // tailwind token (warm neutral landmass)
-const INDIA = "bg-rust"; // terracotta accent — India
-
-/** Countries rendered as individual silhouettes (land = sand, India = rust). */
-const COUNTRIES: { d: string; india?: boolean }[] = [
+/** Land-mass silhouettes (warm neutral). India is rendered separately below. */
+const COUNTRIES: { d: string }[] = [
   /* North America */
   { d: "M17 45 L25 32 L37 22 L57 15 L83 11 L105 12 L120 20 L129 26 L136 30 L147 30 L156 26 L165 22 L172 26 L169 34 L158 40 L147 45 L139 52 L131 60 L122 64 L116 72 L110 78 L104 86 L99 92 L94 88 L92 79 L87 72 L81 64 L74 58 L63 54 L52 51 L40 49 L29 47 Z" },
   /* Central America */
@@ -60,9 +56,11 @@ const COUNTRIES: { d: string; india?: boolean }[] = [
   { d: "M530 168 L544 160 L560 158 L574 162 L584 170 L588 180 L582 190 L570 196 L556 198 L542 194 L532 186 L528 176 Z" },
   /* New Zealand */
   { d: "M604 196 L610 192 L614 198 L608 206 L602 202 Z" },
-  /* INDIA — the highlighted country shape */
-  { d: "M386 66 L396 60 L406 58 L414 62 L420 68 L418 76 L412 82 L406 90 L400 100 L394 110 L388 116 L382 112 L378 102 L376 90 L376 78 L380 70 Z", india: true },
 ];
+
+/** India — the highlighted country shape (terracotta accent). */
+const INDIA_PATH =
+  "M386 66 L396 60 L406 58 L414 62 L420 68 L418 76 L412 82 L406 90 L400 100 L394 110 L388 116 L382 112 L378 102 L376 90 L376 78 L380 70 Z";
 
 export default function ImpactMap() {
   const impact = useImpactContent();
@@ -122,7 +120,7 @@ export default function ImpactMap() {
             <FadeIn delay={0.2}>
               <div className="relative aspect-[2/1] w-full">
                 <svg
-                  viewBox="0 0 1000 500"
+                  viewBox="0 0 660 240"
                   role="img"
                   aria-label="World map highlighting India"
                   className="h-full w-full"
@@ -130,19 +128,22 @@ export default function ImpactMap() {
                 >
                   <title>World map — India highlighted</title>
                   {COUNTRIES.map((c) => (
-                    <path
-                      key={c.d}
-                      d={c.d}
-                      className={cn(
-                        "transition-colors duration-500",
-                        c.india ? "fill-rust" : "fill-sand",
-                      )}
-                    />
+                    <path key={c.d} d={c.d} className="fill-sand" />
                   ))}
+                  {/* India — highlighted; subtle deepen on hover. */}
+                  <path
+                    d={INDIA_PATH}
+                    className="peer/india fill-rust transition-colors duration-500 hover:fill-clay"
+                  />
+                  <text
+                    x="446"
+                    y="72"
+                    className="editorial-label fill-clay opacity-0 transition-opacity duration-500 peer-hover/india:opacity-100"
+                  >
+                    INDIA
+                  </text>
                 </svg>
-                <p className="editorial-label pointer-events-none absolute bottom-6 left-8 text-clay/70">
-                  India — highlighted
-                </p>
+
               </div>
               <div className="mt-2 border-l-2 border-sunlight bg-mist/60 p-6">
                 <p className="editorial-label mb-2 text-rust">India</p>
