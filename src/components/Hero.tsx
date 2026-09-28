@@ -55,13 +55,6 @@ export default function Hero() {
       {/* Film grain only — no color-altering overlays on the supplied artwork */}
       <FilmGrain opacity={0.12} />
 
-      {/* Mobile-only readability scrim — anchors the art-directed mobile text.
-          Desktop keeps the artwork exactly as supplied (no overlay). */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 z-[1] h-1/2 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent lg:hidden"
-      />
-
       {/* Content */}
       <motion.div
         style={reduced ? undefined : { opacity: contentOpacity, y: contentY }}
@@ -71,73 +64,6 @@ export default function Hero() {
           {/* Site headline hidden per direction — the artwork carries its own.
               Kept for screen readers and document outline. */}
           <h1 className="sr-only">{hero.titleLines.join(" ")}</h1>
-
-          {/* Mobile art direction — the 16:9 artwork's baked-in headline cannot
-              survive a tall phone crop, so narrow screens get real, animated
-              HTML text over a scrim. Hidden at lg+ so desktop is untouched.
-              aria-hidden: the sr-only h1 already carries the words. */}
-          <motion.p
-            aria-hidden
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.9, ease: EASE }}
-            className="editorial-label flex items-center gap-3 text-apricot lg:hidden"
-          >
-            <span aria-hidden className="h-px w-8 bg-apricot/70" />
-            {hero.kicker}
-          </motion.p>
-          <motion.div
-            aria-hidden
-            className="mt-4 lg:hidden"
-            initial={reduced ? { opacity: 0 } : undefined}
-            animate={reduced ? { opacity: 1 } : undefined}
-          >
-            {hero.titleLines.map((line, i) => (
-              <span key={i} className="headline-crop block">
-                <motion.span
-                  className="block font-serif text-[clamp(2.6rem,11vw,3.75rem)] leading-[1.02] text-ivory will-change-transform"
-                  initial={reduced ? { opacity: 0 } : { y: "112%" }}
-                  animate={reduced ? { opacity: 1 } : { y: "0%" }}
-                  transition={
-                    reduced
-                      ? { duration: 0.2 }
-                      : { duration: 1.1, ease: EASE, delay: 0.55 + i * 0.16 }
-                  }
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-          </motion.div>
-          <motion.p
-            aria-hidden
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.25 }}
-            className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-mist/85 lg:hidden"
-          >
-            {hero.subline}
-          </motion.p>
-          <motion.div
-            aria-hidden
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.45 }}
-            className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:hidden"
-          >
-            <a
-              href={hero.primaryCta.href}
-              className="editorial-label inline-flex items-center justify-center border border-sunlight/60 bg-ink/30 px-6 py-4 text-ivory backdrop-blur-sm transition-colors duration-500 hover:bg-sunlight/15"
-            >
-              {hero.primaryCta.label} →
-            </a>
-            <a
-              href={hero.secondaryCta.href}
-              className="editorial-label link-reveal inline-flex items-center justify-center py-4 text-mist/85 transition-colors duration-500 hover:text-sunlight"
-            >
-              {hero.secondaryCta.label}
-            </a>
-          </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
@@ -158,11 +84,10 @@ export default function Hero() {
             {hero.subline}
           </motion.p>
 
-          <div className="sr-only flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <a href={hero.primaryCta.href}>{hero.primaryCta.label}</a>
-            <a href={hero.secondaryCta.href}>{hero.secondaryCta.label}</a>
-          </div>
+
         </div>
+
+
       </motion.div>
     </section>
   );
