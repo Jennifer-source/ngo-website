@@ -171,7 +171,7 @@ export const FILM = {
   description:
     "A short documentary on the work — the people, the places and the quiet hours in between — told in the community's own words.",
   /** Set the ministry's documentary URL here (mp4 or embed provider). */
-  videoUrl: "" as string,
+  videoUrl: "https://res.cloudinary.com/h3yp1cn6/video/upload/v1790591264/0921_3.mp4" as string,
   /** Poster shown before playback. */
   poster: {
     src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=2000&q=80",

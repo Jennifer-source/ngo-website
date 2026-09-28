@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useFilmContent } from "@/hooks/use-site-content";
 import { CHAPTER_COUNT } from "@/content/site";
@@ -13,6 +13,17 @@ export default function JourneyFilm() {
   const film = useFilmContent();
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  /* The PLAY control mounts the player and starts it — user-initiated
+     playback (a click), never autoplay-with-sound on page load. */
+  useEffect(() => {
+    if (playing) {
+      videoRef.current?.play().catch(() => {
+        /* Browser refused; the native controls remain for the user. */
+      });
+    }
+  }, [playing]);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -51,11 +62,12 @@ export default function JourneyFilm() {
             {/* Poster / video */}
             {playing && hasVideo ? (
               <video
+                ref={videoRef}
                 src={film.videoUrl}
                 poster={film.poster.src}
                 controls
-                autoPlay
                 playsInline
+                preload="metadata"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
