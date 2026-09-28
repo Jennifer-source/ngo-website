@@ -84,7 +84,11 @@ export default function JourneyFilm() {
                 preload="metadata"
                 onPlay={() => setStage("playing")}
                 onPause={() => setStage("paused")}
-                onEnded={() => setStage("poster")}
+                onEnded={() => {
+                  /* Ended: reset to the beginning so replay starts fresh. */
+                  if (videoRef.current) videoRef.current.currentTime = 0;
+                  setStage("poster");
+                }}
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
@@ -127,50 +131,50 @@ export default function JourneyFilm() {
               </button>
             )}
 
-            {/* Center play/pause toggle — stays available during playback.
-                Playing: subtle pause bars; paused: play triangle, slightly
-                more present; hover lifts visibility on both. */}
+            {/* Bottom-center mini control — during playback only. Playing:
+                subtle pause bars; paused: play triangle, slightly more
+                present; hover lifts visibility on both. */}
             {stage !== "poster" && hasVideo && (
-              <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-                <motion.button
-                  type="button"
-                  onClick={togglePlayback}
-                  data-cursor={stage === "playing" ? "PAUSE" : "PLAY"}
-                  aria-label={stage === "playing" ? "Pause film" : "Play film"}
-                  whileHover={{ scale: 1.06 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ duration: 0.5, ease: EASE }}
-                  className={cn(
-                    "group flex h-24 w-24 items-center justify-center rounded-full border backdrop-blur-sm transition-colors duration-500",
-                    stage === "playing"
-                      ? "border-mist/30 bg-ink/25 group-hover:border-mist/60 group-hover:bg-ink/45"
-                      : "border-mist/50 bg-ink/40 group-hover:border-mist/75 group-hover:bg-ink/60",
-                  )}
-                >
-                  {stage === "playing" ? (
-                    <svg
-                      width="16"
-                      height="18"
-                      viewBox="0 0 16 18"
-                      aria-hidden
-                      className="fill-mist transition-colors duration-500 group-hover:fill-ivory"
-                    >
-                      <rect x="2" y="1" width="4.5" height="16" rx="1" />
-                      <rect x="9.5" y="1" width="4.5" height="16" rx="1" />
-                    </svg>
-                  ) : (
-                    <svg
-                      width="18"
-                      height="20"
-                      viewBox="0 0 18 20"
-                      aria-hidden
-                      className="ml-1 fill-mist transition-colors duration-500 group-hover:fill-ivory"
-                    >
-                      <path d="M0 0 L18 10 L0 20 Z" />
-                    </svg>
-                  )}
-                </motion.button>
-              </div>
+              <motion.button
+                type="button"
+                onClick={togglePlayback}
+                data-cursor={stage === "playing" ? "PAUSE" : "PLAY"}
+                aria-label={stage === "playing" ? "Pause film" : "Play film"}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: EASE }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.96 }}
+                className={cn(
+                  "group absolute inset-x-0 bottom-8 z-20 mx-auto flex h-12 w-12 items-center justify-center rounded-full border backdrop-blur-sm transition-colors duration-500",
+                  stage === "playing"
+                    ? "border-mist/30 bg-ink/30 group-hover:border-mist/60 group-hover:bg-ink/50"
+                    : "border-mist/50 bg-ink/45 group-hover:border-mist/75 group-hover:bg-ink/65",
+                )}
+              >
+                {stage === "playing" ? (
+                  <svg
+                    width="12"
+                    height="14"
+                    viewBox="0 0 16 18"
+                    aria-hidden
+                    className="fill-mist transition-colors duration-500 group-hover:fill-ivory"
+                  >
+                    <rect x="2" y="1" width="4.5" height="16" rx="1" />
+                    <rect x="9.5" y="1" width="4.5" height="16" rx="1" />
+                  </svg>
+                ) : (
+                  <svg
+                    width="13"
+                    height="14"
+                    viewBox="0 0 18 20"
+                    aria-hidden
+                    className="ml-0.5 fill-mist transition-colors duration-500 group-hover:fill-ivory"
+                  >
+                    <path d="M0 0 L18 10 L0 20 Z" />
+                  </svg>
+                )}
+              </motion.button>
             )}
 
             {/* No-video honest state */}
