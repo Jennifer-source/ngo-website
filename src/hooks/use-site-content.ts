@@ -74,7 +74,6 @@ export function useImpactContent() {
   return {
     ...merged,
     fields: withFallbackArray(db && (db as { fields?: unknown }).fields, IMPACT.fields),
-    regions: withFallbackArray(db && (db as { regions?: unknown }).regions, IMPACT.regions),
   };
 }
 

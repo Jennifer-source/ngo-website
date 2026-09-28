@@ -152,24 +152,6 @@ export const IMPACT = {
   statementLines: ["A small act of grace", "can travel far."],
   intro:
     "Where the journey has reached, and where it is going next.",
-  /** Regions only. No invented statistics. */
-  regions: [
-    {
-      id: "india",
-      name: "India",
-      detail: "Community outreach, care initiatives, and meals served.",
-      x: 71.9,
-      y: 39.5,
-    },
-    {
-      id: "nepal",
-      name: "Nepal",
-      detail: "Placeholder — describe the work in this region.",
-      x: 74.6,
-      y: 34.5,
-    },
-    { id: "africa", name: "Eastern Africa", detail: "Placeholder — describe the work in this region.", x: 60.6, y: 49.5 },
-  ],
   /** Impact metrics — verified figures recorded by the trust. */
   fields: [
     { id: "communities", label: "Communities reached", value: "25+" },

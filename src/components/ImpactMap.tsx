@@ -1,5 +1,4 @@
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useImpactContent } from "@/hooks/use-site-content";
 import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, SectionHeader, AnimatedText, FadeIn } from "./motion/Primitives";
@@ -7,13 +6,66 @@ import { cn } from "@/lib/utils";
 
 /**
  * Chapter 02 — Impact.
- * A quiet cartographic system: illuminated regions pulse on a minimal
- * world map. Figures render only when verified — missing values hold an em dash.
+ * An editorial world map with India highlighted — where the journey began.
+ * Figures render only when verified — missing values hold an em dash.
  */
+
+/*
+ * Editorial world map — single viewBox 0 0 1000 500, equirectangular.
+ * Contintent silhouettes are hand-tuned (recognisable, intentionally
+ * simplified); India is its own path so it can carry the terracotta fill.
+ * No external map service, no extra dependency.
+ */
+
+const LAND = "bg-sand"; // tailwind token (warm neutral landmass)
+const INDIA = "bg-rust"; // terracotta accent — India
+
+/** Countries rendered as individual silhouettes (land = sand, India = rust). */
+const COUNTRIES: { d: string; india?: boolean }[] = [
+  /* North America */
+  { d: "M17 45 L25 32 L37 22 L57 15 L83 11 L105 12 L120 20 L129 26 L136 30 L147 30 L156 26 L165 22 L172 26 L169 34 L158 40 L147 45 L139 52 L131 60 L122 64 L116 72 L110 78 L104 86 L99 92 L94 88 L92 79 L87 72 L81 64 L74 58 L63 54 L52 51 L40 49 L29 47 Z" },
+  /* Central America */
+  { d: "M98 93 L104 87 L110 79 L117 73 L124 70 L131 71 L135 75 L130 79 L123 82 L116 86 L109 90 L104 95 Z" },
+  /* South America */
+  { d: "M104 95 L112 90 L121 88 L130 92 L137 99 L141 108 L143 118 L139 128 L134 139 L130 150 L126 161 L122 171 L118 178 L114 174 L112 163 L110 151 L107 139 L104 126 L101 113 L100 103 Z" },
+  /* Greenland */
+  { d: "M150 12 L162 8 L175 9 L184 14 L182 21 L173 26 L162 26 L154 20 Z" },
+  /* Iceland */
+  { d: "M181 33 L189 31 L193 35 L187 39 L181 38 Z" },
+  /* Scandinavia */
+  { d: "M240 16 L252 12 L264 14 L270 20 L262 26 L255 34 L249 42 L243 38 L243 28 Z" },
+  /* British Isles */
+  { d: "M222 38 L230 34 L235 40 L231 47 L224 48 Z" },
+  /* Europe (mainland) */
+  { d: "M236 44 L248 42 L258 44 L268 42 L278 44 L286 48 L293 54 L300 60 L296 66 L288 70 L280 74 L271 76 L263 74 L255 76 L247 74 L241 70 L237 62 L235 53 Z" },
+  /* Iberia + Med coast merge into Europe shape above; Africa next */
+  { d: "M221 52 L230 50 L237 53 L240 60 L238 68 L232 74 L226 72 L221 64 Z" },
+  /* Africa */
+  { d: "M240 82 L252 78 L264 76 L276 80 L286 84 L294 90 L300 98 L303 108 L298 118 L292 128 L286 140 L280 152 L274 164 L267 172 L259 174 L252 170 L248 160 L244 148 L240 136 L236 124 L232 112 L230 100 L233 90 Z" },
+  /* Madagascar */
+  { d: "M312 138 L318 132 L323 138 L321 148 L314 152 L310 146 Z" },
+  /* Middle East + Central Asia */
+  { d: "M300 60 L310 56 L320 52 L332 50 L344 48 L356 50 L366 54 L374 60 L380 68 L376 76 L368 82 L358 84 L348 80 L338 82 L330 86 L322 82 L314 76 L306 70 Z" },
+  /* Russia / North Asia */
+  { d: "M290 40 L310 34 L335 28 L360 24 L390 20 L420 18 L450 16 L480 14 L510 14 L540 16 L570 18 L600 22 L620 26 L632 32 L628 40 L616 46 L600 50 L582 52 L564 50 L546 52 L528 54 L510 52 L492 54 L474 56 L456 54 L440 56 L424 58 L410 56 L396 58 L382 56 L368 54 L356 50 L344 48 L332 50 L320 52 L308 54 L298 52 Z" },
+  /* China / East Asia */
+  { d: "M424 58 L442 56 L460 58 L478 60 L494 64 L506 70 L512 78 L506 86 L496 92 L486 98 L476 102 L466 100 L456 96 L446 98 L438 92 L432 84 L426 74 L422 66 Z" },
+  /* Southeast Asia */
+  { d: "M470 100 L478 96 L486 100 L490 108 L486 116 L478 120 L472 114 Z" },
+  /* Indonesia / islands */
+  { d: "M482 128 L494 124 L506 126 L516 130 L526 134 L518 138 L506 136 L494 136 L486 134 Z" },
+  /* Japan */
+  { d: "M540 62 L548 58 L554 64 L550 74 L542 80 L538 72 Z" },
+  /* Australia */
+  { d: "M530 168 L544 160 L560 158 L574 162 L584 170 L588 180 L582 190 L570 196 L556 198 L542 194 L532 186 L528 176 Z" },
+  /* New Zealand */
+  { d: "M604 196 L610 192 L614 198 L608 206 L602 202 Z" },
+  /* INDIA — the highlighted country shape */
+  { d: "M386 66 L396 60 L406 58 L414 62 L420 68 L418 76 L412 82 L406 90 L400 100 L394 110 L388 116 L382 112 L378 102 L376 90 L376 78 L380 70 Z", india: true },
+];
+
 export default function ImpactMap() {
   const impact = useImpactContent();
-  const reduced = useReducedMotion();
-  const [activeRegion, setActiveRegion] = useState<string | null>("india");
 
   return (
     <section
@@ -65,139 +117,43 @@ export default function ImpactMap() {
             </div>
           </div>
 
-          {/* Map — dots positioned in percentage space over a minimal projection */}
-          <div className="relative col-span-12 lg:col-span-7">
-            <div className="relative aspect-[2/1] w-full">
-              {/* Dot-grid map silhouette — computed once, positioned by the SVG viewport */}
-              <WorldDots />
-
-              {/* Region pulses */}
-              {impact.regions.map((r, i) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => setActiveRegion((cur) => (cur === r.id ? null : r.id))}
-                  aria-pressed={activeRegion === r.id}
-                  aria-label={`${r.name} — show detail`}
-                  className="group absolute -translate-x-1/2 -translate-y-1/2 focus-visible:outline-offset-4"
-                  style={{ left: `${r.x}%`, top: `${r.y}%` }}
+          {/* World map — India highlighted */}
+          <div className="col-span-12 lg:col-span-7">
+            <FadeIn delay={0.2}>
+              <div className="relative aspect-[2/1] w-full">
+                <svg
+                  viewBox="0 0 1000 500"
+                  role="img"
+                  aria-label="World map highlighting India"
+                  className="h-full w-full"
+                  preserveAspectRatio="xMidYMid meet"
                 >
-                  <span className="relative flex items-center justify-center">
-                    {!reduced && (
-                      <span
-                        className="animate-pulse-ring absolute h-4 w-4 rounded-full bg-sun/50"
-                        style={{ animationDelay: `${i * 0.9}s` }}
-                      />
-                    )}
-                    <span
+                  <title>World map — India highlighted</title>
+                  {COUNTRIES.map((c) => (
+                    <path
+                      key={c.d}
+                      d={c.d}
                       className={cn(
-                        "relative h-2.5 w-2.5 rounded-full transition-all duration-500",
-                        activeRegion === r.id ? "scale-150 bg-clay" : "bg-sun group-hover:bg-ember",
+                        "transition-colors duration-500",
+                        c.india ? "fill-rust" : "fill-sand",
                       )}
                     />
-                  </span>
-                  <span
-                    className={cn(
-                      "editorial-label absolute left-1/2 top-4 -translate-x-1/2 whitespace-nowrap transition-colors duration-500",
-                      activeRegion === r.id ? "text-clay" : "text-ink/50 group-hover:text-rust",
-                    )}
-                  >
-                    {r.name}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {/* Region detail */}
-            <AnimatePresence mode="wait">
-              {activeRegion && (
-                <motion.div
-                  key={activeRegion}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.6, ease: EASE }}
-                  className="mt-2 border-l-2 border-sunlight bg-mist/60 p-6"
-                >
-                  <p className="editorial-label mb-2 text-rust">
-                    {impact.regions.find((r) => r.id === activeRegion)?.name}
-                  </p>
-                  <p className="max-w-xl text-[0.9rem] leading-relaxed text-charcoal/85">
-                    {impact.regions.find((r) => r.id === activeRegion)?.detail}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  ))}
+                </svg>
+                <p className="editorial-label pointer-events-none absolute bottom-6 left-8 text-clay/70">
+                  India — highlighted
+                </p>
+              </div>
+              <div className="mt-2 border-l-2 border-sunlight bg-mist/60 p-6">
+                <p className="editorial-label mb-2 text-rust">India</p>
+                <p className="max-w-xl text-[0.9rem] leading-relaxed text-charcoal/85">
+                  Where the journey began.
+                </p>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </div>
     </section>
   );
-}
-
-function WorldDots() {
-  const dots = useMemo(() => {
-    const out: { x: number; y: number }[] = [];
-    for (let r = 0; r < 60; r++) {
-      for (let c = 0; c < 120; c++) {
-        const x = c * 1.66 + 0.8;
-        const y = r * 1.66 + 0.8;
-        if (dotInLand(x, y)) out.push({ x, y });
-      }
-    }
-    return out;
-  }, []);
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 200 100"
-      className="absolute inset-0 h-full w-full"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      {dots.map((d, i) => (
-        <circle key={i} cx={d.x} cy={d.y} r={0.42} fill="#221c16" opacity={0.13} />
-      ))}
-    </svg>
-  );
-}
-
-/* Very rough equirectangular land test for the dot silhouette. */
-function dotInLand(x: number, y: number): boolean {
-  /* Lat band: y 0 (north) to 100 (south) */
-  const lat = 90 - y; /* 90 to -10 */
-  const lon = x - 100; /* -100 to 100 */
-
-  if (lat > 78) return false;
-
-  /* North America */
-  if (lon > -168 && lon < -55 && lat > 15) {
-    if (lon > -100 && lat < 25 && lon < -85) return false;
-    if (lon > -120 && lat > 55 && lat < 60 && lon < -100) return true;
-    return !(lon > -80 && lon < -64 && lat > 46 && lat < 50.5); /* rough */
-  }
-  /* Greenland-ish */
-  if (lon > -60 && lon < -20 && lat > 60) return true;
-  /* South America */
-  if (lon > -82 && lon < -34 && lat < 14) {
-    return !(lon < -75 && lat < -45);
-  }
-  /* Europe */
-  if (lon > -12 && lon < 45 && lat > 35) {
-    return !(lon > 15 && lon < 30 && lat > 62);
-  }
-  /* Africa */
-  if (lon > -18 && lon < 52 && lat < 38) {
-    return !(lat < -30 && lon > 30);
-  }
-  /* Asia */
-  if (lon >= 45 && lon < 145 && lat > -12) {
-    return !(lat > 0 && lat < 8 && lon > 96); /* simplify */
-  }
-  /* Indonesia / Oceania */
-  if (lon > 95 && lat < -8 && lon < 155) return true;
-  if (lon > 112 && lat < -10 && lat > -42) return true;
-  if (lon > 166 && lat < -34 && lat > -48) return true;
-  if (lon > 174 && lat > -50 && lat < -32) return true;
-
-  return false;
 }
