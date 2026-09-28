@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { useFilmContent } from "@/hooks/use-site-content";
 import { CHAPTER_COUNT } from "@/content/site";
 import { EASE, FilmGrain, SectionHeader } from "./motion/Primitives";
+import { cn } from "@/lib/utils";
 
 /**
  * Chapter 03 — Our Journey Film.
@@ -11,19 +12,33 @@ import { EASE, FilmGrain, SectionHeader } from "./motion/Primitives";
  */
 export default function JourneyFilm() {
   const film = useFilmContent();
-  const [playing, setPlaying] = useState(false);
+  type FilmStage = "poster" | "playing" | "paused";
+  const [stage, setStage] = useState<FilmStage>("poster");
   const ref = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  /* The PLAY control mounts the player and starts it — user-initiated
-     playback (a click), never autoplay-with-sound on page load. */
+  /* Playback is user-initiated (a click) — never autoplay with sound.
+     Stage flow: poster → playing ⇄ paused → poster (on end). */
   useEffect(() => {
-    if (playing) {
+    if (stage === "playing") {
       videoRef.current?.play().catch(() => {
-        /* Browser refused; the native controls remain for the user. */
+        /* Browser refused; the centered control remains for the user. */
       });
     }
-  }, [playing]);
+  }, [stage]);
+
+  /** Centered cinematic control — the primary play/pause interaction. */
+  const togglePlayback = (e: ReactMouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (stage === "poster") {
+      setStage("playing");
+      return;
+    }
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) void v.play().catch(() => {});
+    else v.pause();
+  };
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
@@ -55,20 +70,21 @@ export default function JourneyFilm() {
 
         {/* Stage */}
         <motion.div
-          style={playing ? undefined : { scale }}
+          style={stage === "poster" ? { scale } : undefined}
           className="relative mt-16 overflow-hidden"
         >
           <div className="relative aspect-video w-full">
             {/* Poster / video */}
-            {playing && hasVideo ? (
+            {stage !== "poster" && hasVideo ? (
               <video
                 ref={videoRef}
                 src={film.videoUrl}
                 poster={film.poster.src}
-                controls
                 playsInline
                 preload="metadata"
-                onEnded={() => setPlaying(false)}
+                onPlay={() => setStage("playing")}
+                onPause={() => setStage("paused")}
+                onEnded={() => setStage("poster")}
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
@@ -85,11 +101,11 @@ export default function JourneyFilm() {
 
             <div className="absolute inset-0 z-[1] bg-ink/35" />
 
-            {/* Center play control */}
-            {!playing && (
+            {/* Center play control — poster state */}
+            {stage === "poster" && (
               <button
                 type="button"
-                onClick={() => setPlaying(true)}
+                onClick={() => setStage("playing")}
                 data-cursor="PLAY"
                 aria-label="Play the journey film"
                 className="group absolute inset-0 z-10 flex flex-col items-center justify-center gap-6"
@@ -111,8 +127,54 @@ export default function JourneyFilm() {
               </button>
             )}
 
+            {/* Center play/pause toggle — stays available during playback.
+                Playing: subtle pause bars; paused: play triangle, slightly
+                more present; hover lifts visibility on both. */}
+            {stage !== "poster" && hasVideo && (
+              <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+                <motion.button
+                  type="button"
+                  onClick={togglePlayback}
+                  data-cursor={stage === "playing" ? "PAUSE" : "PLAY"}
+                  aria-label={stage === "playing" ? "Pause film" : "Play film"}
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className={cn(
+                    "group flex h-24 w-24 items-center justify-center rounded-full border backdrop-blur-sm transition-colors duration-500",
+                    stage === "playing"
+                      ? "border-mist/30 bg-ink/25 group-hover:border-mist/60 group-hover:bg-ink/45"
+                      : "border-mist/50 bg-ink/40 group-hover:border-mist/75 group-hover:bg-ink/60",
+                  )}
+                >
+                  {stage === "playing" ? (
+                    <svg
+                      width="16"
+                      height="18"
+                      viewBox="0 0 16 18"
+                      aria-hidden
+                      className="fill-mist transition-colors duration-500 group-hover:fill-ivory"
+                    >
+                      <rect x="2" y="1" width="4.5" height="16" rx="1" />
+                      <rect x="9.5" y="1" width="4.5" height="16" rx="1" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="18"
+                      height="20"
+                      viewBox="0 0 18 20"
+                      aria-hidden
+                      className="ml-1 fill-mist transition-colors duration-500 group-hover:fill-ivory"
+                    >
+                      <path d="M0 0 L18 10 L0 20 Z" />
+                    </svg>
+                  )}
+                </motion.button>
+              </div>
+            )}
+
             {/* No-video honest state */}
-            {!hasVideo && playing && (
+            {!hasVideo && stage !== "poster" && (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-ink/80 p-8 text-center">
                 <p className="editorial-label text-apricot">The film is being prepared</p>
                 <p className="max-w-md text-sm leading-relaxed text-mist/80">
@@ -121,7 +183,7 @@ export default function JourneyFilm() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setPlaying(false)}
+                  onClick={() => setStage("poster")}
                   className="editorial-label mt-2 text-sunlight underline-offset-4 hover:underline"
                 >
                   ← Back
