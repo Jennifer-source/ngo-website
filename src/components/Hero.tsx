@@ -6,7 +6,12 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { useHeroContent } from "@/hooks/use-site-content";
-import { EASE, FilmGrain } from "./motion/Primitives";
+import {
+  AnimatedText,
+  EASE,
+  FilmGrain,
+  MagneticButton,
+} from "./motion/Primitives";
 
 export default function Hero() {
   const hero = useHeroContent();
@@ -55,6 +60,17 @@ export default function Hero() {
       {/* Film grain only — no color-altering overlays on the supplied artwork */}
       <FilmGrain opacity={0.12} />
 
+      {/* Mobile/tablet legibility scrim — 16:9 artwork must crop on tall
+          screens, which hides its baked-in headline. Below lg we lay the
+          site's own ink gradient (from-ink/50 via-ink/20 to-ink/80 family)
+          over the artwork and set the same words in HTML so the hierarchy
+          survives every crop. Hidden at lg+: desktop keeps the artwork
+          untouched, exactly as designed. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 z-[3] bg-gradient-to-b from-ink/60 via-ink/15 to-ink/85 lg:hidden"
+      />
+
       {/* Content */}
       <motion.div
         style={reduced ? undefined : { opacity: contentOpacity, y: contentY }}
@@ -83,6 +99,58 @@ export default function Hero() {
           >
             {hero.subline}
           </motion.p>
+        </div>
+
+        {/* Mobile/tablet hero layer — visible below lg only. The aria-hidden
+            text mirrors the sr-only copy above (screen readers hear it once);
+            the CTAs are real, focusable links with 44px touch targets. */}
+        <div className="lg:hidden">
+          <div aria-hidden>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.2, delay: 0.9, ease: EASE }}
+              className="editorial-label flex items-center gap-4 text-apricot"
+            >
+              <span className="h-px w-10 bg-apricot/70" />
+              {hero.kicker}
+            </motion.p>
+
+            <AnimatedText
+              lines={hero.titleLines}
+              as="p"
+              delay={0.55}
+              className="mt-6 font-serif text-[clamp(2.4rem,11.5vw,4.25rem)] leading-[0.98] text-ivory"
+            />
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EASE, delay: 1.25 }}
+            aria-hidden
+            className="mt-6 max-w-md text-[0.95rem] leading-relaxed text-mist/85"
+          >
+            {hero.subline}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EASE, delay: 1.45 }}
+            className="mt-10 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+          >
+            <MagneticButton href={hero.primaryCta.href} light>
+              {hero.primaryCta.label}
+            </MagneticButton>
+            <MagneticButton
+              href={hero.secondaryCta.href}
+              variant="outline"
+              light
+            >
+              {hero.secondaryCta.label}
+            </MagneticButton>
+          </motion.div>
         </div>
       </motion.div>
     </section>
