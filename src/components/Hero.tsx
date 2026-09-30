@@ -6,12 +6,7 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { useHeroContent } from "@/hooks/use-site-content";
-import {
-  AnimatedText,
-  EASE,
-  FilmGrain,
-  MagneticButton,
-} from "./motion/Primitives";
+import { EASE, FilmGrain } from "./motion/Primitives";
 
 export default function Hero() {
   const hero = useHeroContent();
@@ -37,9 +32,8 @@ export default function Hero() {
       className="relative h-[100svh] overflow-hidden bg-ink"
     >
       {/* Ministry hero artwork — used exactly as provided (no duotone, no darkening).
-          On desktop (lg+) the crop keeps the artwork's own headline (left side) in
-          frame. Below lg the window shifts to the artwork's imagery band so the
-          baked-in typography stays out of frame on phones and tablets. */}
+          object-position keeps the artwork's own headline (left side) in frame on
+          narrow screens where 16:9 must crop. */}
       <motion.div className="absolute inset-0" style={reduced ? undefined : { y: imgY, scale: imgScale }}>
         {artworkReady ? (
           <img
@@ -48,7 +42,7 @@ export default function Hero() {
             fetchPriority="high"
             decoding="async"
             onError={() => setArtworkReady(false)}
-            className="h-full w-full object-cover object-[72%_center] md:object-[84%_center] lg:object-[32%_center]"
+            className="h-full w-full object-cover object-[32%_center]"
           />
         ) : (
           /* Neutral dark stage while the artwork file is not yet present —
@@ -60,13 +54,6 @@ export default function Hero() {
 
       {/* Film grain only — no color-altering overlays on the supplied artwork */}
       <FilmGrain opacity={0.12} />
-
-      {/* Mobile-only legibility scrim — the imagery band is bright where the
-          content sits. Desktop renders no overlay at all. */}
-      <div
-        aria-hidden
-        className="absolute inset-0 z-[3] bg-gradient-to-b from-ink/60 via-ink/15 to-ink/85 lg:hidden"
-      />
 
       {/* Content */}
       <motion.div
@@ -82,46 +69,20 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2, delay: 0.9, ease: EASE }}
-            className="editorial-label flex items-center gap-4 text-apricot lg:sr-only"
+            className="editorial-label sr-only flex items-center gap-4 text-apricot"
           >
             <span aria-hidden className="h-px w-10 bg-apricot/70" />
             {hero.kicker}
           </motion.p>
 
-          {/* Below lg the same headline is ALSO set as real HTML — the artwork's
-              baked-in headline is cropped out of frame on phones, so the existing
-              copy carries the message there. Desktop renders none of this. */}
-          <AnimatedText
-            as="p"
-            lines={hero.titleLines}
-            delay={0.55}
-            className="mt-6 font-serif text-[clamp(2.4rem,11.5vw,4.25rem)] leading-[0.98] text-ivory lg:hidden"
-          />
-
           <motion.p
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: EASE, delay: 1.25 }}
-            className="mt-8 max-w-md text-[0.95rem] leading-relaxed text-mist/85 lg:sr-only"
+            className="sr-only mt-8 max-w-md text-[0.95rem] leading-relaxed text-mist/85"
           >
             {hero.subline}
           </motion.p>
-
-          {/* The existing CTAs, rendered below lg where the desktop artwork crop
-              leaves room for the content stack. Same labels, same targets. */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 1.45 }}
-            className="mt-10 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center lg:hidden"
-          >
-            <MagneticButton href={hero.primaryCta.href} variant="solid" light>
-              {hero.primaryCta.label}
-            </MagneticButton>
-            <MagneticButton href={hero.secondaryCta.href} variant="outline" light>
-              {hero.secondaryCta.label}
-            </MagneticButton>
-          </motion.div>
         </div>
       </motion.div>
     </section>
