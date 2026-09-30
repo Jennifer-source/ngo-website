@@ -42,7 +42,7 @@ export default function Hero() {
             fetchPriority="high"
             decoding="async"
             onError={() => setArtworkReady(false)}
-            className="h-full w-full object-cover object-[32%_center]"
+            className="h-full w-full object-contain object-center lg:object-cover lg:object-[32%_center]"
           />
         ) : (
           /* Neutral dark stage while the artwork file is not yet present —
