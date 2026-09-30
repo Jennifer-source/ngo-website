@@ -52,7 +52,7 @@ export default function JourneyFilm() {
       ref={ref}
       id="film"
       aria-label="Our journey film"
-      className="relative bg-ink py-28 text-ivory md:py-40"
+      className="relative overflow-hidden bg-ink py-28 text-ivory md:py-40"
     >
       <FilmGrain opacity={0.22} />
 

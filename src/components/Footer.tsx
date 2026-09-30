@@ -58,7 +58,7 @@ export default function Footer() {
         <div className="rule my-14 text-ivory" />
 
         {/* Columns */}
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-4 md:gap-10">
           <div className="col-span-12 md:col-span-4">
             <p className="editorial-label mb-5 text-apricot/70">Navigate</p>
             <ul className="space-y-2.5">

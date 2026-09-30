@@ -53,7 +53,7 @@ function FounderChapter({
   return (
     <article
       ref={ref}
-      className="grid grid-cols-12 items-center gap-8 md:gap-12"
+      className="grid grid-cols-12 items-center gap-4 md:gap-12"
       aria-label={founder.name}
     >
       {/* Portrait */}

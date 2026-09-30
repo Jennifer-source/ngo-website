@@ -106,7 +106,7 @@ export default function Donate() {
       className="relative bg-cream py-28 md:py-40"
     >
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-4 md:gap-10">
           <div className="col-span-12 lg:col-span-5">
             <SectionHeader label={donate.label} chapter={9} total={CHAPTER_COUNT} />
             <AnimatedText
